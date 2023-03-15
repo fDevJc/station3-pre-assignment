@@ -70,7 +70,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
+//    testImplementation 'org.springframework.security:spring-security-test'
 
     /* spring rest docs dependency 추가 */
     asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
