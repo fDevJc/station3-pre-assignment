@@ -2,7 +2,48 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.9'
     id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+    /* asciidoc파일을 변환해주고, Build폴더에 복사해주는 플러그인 */
+    id "org.asciidoctor.jvm.convert" version "3.3.2"
 }
+
+/* =============== BEGIN Spring Rest Docs SETTING ===============*/
+ext {
+    snippetsDir = file('build/generated-snippets')
+    docsDir = file('src/docs/asciidoc')
+}
+asciidoctor {
+    configurations 'asciidoctorExtensions'
+    inputs.dir snippetsDir
+    dependsOn test
+    attributes 'docsDir': docsDir
+}
+
+asciidoctor.doFirst {
+    delete file('src/main/resources/static/docs')
+}
+
+task copyDocument(type: Copy) {
+    dependsOn asciidoctor
+    from file("build/docs/asciidoc")
+    into file("src/main/resources/static/docs")
+}
+
+build {
+    dependsOn copyDocument
+}
+
+test {
+    outputs.dir snippetsDir
+    useJUnitPlatform()
+}
+
+configurations {
+    asciidoctorExtensions
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+/* =============== END Spring Rest Docs SETTING ===============*/
 
 group = 'com.jc'
 version = '0.0.1-SNAPSHOT'
@@ -30,6 +71,10 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+
+    /* spring rest docs dependency 추가 */
+    asciidoctorExtensions 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 }
 
 tasks.named('test') {
