@@ -13,4 +13,8 @@ public class Password {
 	public Password(String password) {
 		this.password = password;
 	}
+
+	public String get() {
+		return password;
+	}
 }

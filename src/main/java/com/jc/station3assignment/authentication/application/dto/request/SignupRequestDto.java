@@ -23,4 +23,8 @@ public class SignupRequestDto {
 			this.phoneNumber
 		);
 	}
+
+	public void modifyWithEncodedPassword(String encodedPassword) {
+		this.password = encodedPassword;
+	}
 }
