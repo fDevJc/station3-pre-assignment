@@ -10,9 +10,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jc.station3assignment.authentication.application.AuthService;
+import com.jc.station3assignment.authentication.application.dto.request.SigninRequestDto;
 import com.jc.station3assignment.authentication.application.dto.request.SignupRequestDto;
+import com.jc.station3assignment.authentication.application.dto.response.SigninResponseDto;
 import com.jc.station3assignment.authentication.application.dto.response.SignupResponseDto;
+import com.jc.station3assignment.authentication.presentation.dto.request.SigninRequest;
 import com.jc.station3assignment.authentication.presentation.dto.request.SignupRequest;
+import com.jc.station3assignment.authentication.presentation.dto.response.SigninResponse;
 import com.jc.station3assignment.authentication.presentation.dto.response.SignupResponse;
 import com.jc.station3assignment.common.DtoFactory;
 
@@ -31,5 +35,14 @@ public class AuthController {
 		SignupResponseDto signupResponseDto = authService.signup(signupRequestDto);
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(DtoFactory.signupResponse(signupResponseDto));
+	}
+
+	@PostMapping("/signin")
+	public ResponseEntity<SigninResponse> signin(@Valid @RequestBody SigninRequest signinRequest) {
+
+		SigninRequestDto signinRequestDto = DtoFactory.signinRequestDto(signinRequest);
+		SigninResponseDto signinResponseDto = authService.signin(signinRequestDto);
+
+		return ResponseEntity.status(HttpStatus.OK).body(DtoFactory.signinResponseDto(signinResponseDto));
 	}
 }
