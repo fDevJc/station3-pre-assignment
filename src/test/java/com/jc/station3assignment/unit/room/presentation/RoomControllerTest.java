@@ -4,8 +4,9 @@ import static com.jc.station3assignment.config.docs.RestDocsUtils.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
@@ -110,8 +111,7 @@ public class RoomControllerTest {
 					fieldWithPath("deals[].orderNumber").type(JsonFieldType.NUMBER).description("정렬 순서")
 				),
 				responseFields(
-					fieldWithPath("id").type(JsonFieldType.NUMBER).description("등록 방 아이디(내부)")
-				)));
+					fieldWithPath("id").type(JsonFieldType.NUMBER).description("등록 방 아이디(내부)"))));
 	}
 
 	@Test
@@ -168,6 +168,9 @@ public class RoomControllerTest {
 			.andDo(document("put-rooms",
 				getRestDocRequest(),
 				getRestDocResponse(),
+				pathParameters(
+					parameterWithName("roomId").description("방 아이디")
+				),
 				requestFields(
 					fieldWithPath("title").type(JsonFieldType.STRING).description("방소개 제목"),
 					fieldWithPath("roomType").type(JsonFieldType.STRING).description("방 타입"),
@@ -185,7 +188,30 @@ public class RoomControllerTest {
 					fieldWithPath("deals[].dealType").type(JsonFieldType.STRING).description("거래 타입(월세, 전세)"),
 					fieldWithPath("deals[].deposit").type(JsonFieldType.NUMBER).description("보증금(만원)"),
 					fieldWithPath("deals[].rent").type(JsonFieldType.NUMBER).description("집세(만원)"),
-					fieldWithPath("deals[].orderNumber").type(JsonFieldType.NUMBER).description("정렬 순서")
-				)));
+					fieldWithPath("deals[].orderNumber").type(JsonFieldType.NUMBER).description("정렬 순서"))));
+	}
+
+	@Test
+	void 로그인사용자는_자신의_방을_삭제할_수_있다() throws Exception {
+		//given
+		given(authService.validateToken(any()))
+			.willReturn(true);
+		given(authService.getAuthenticatedLoginUser(any()))
+			.willReturn(new LoginUser(1L, "test@email.com"));
+
+		//when
+		ResultActions resultActions = mockMvc.perform(delete("/api/v1/rooms/{roomId}", 1L));
+
+		//then
+		resultActions
+			.andExpect(status().isOk());
+
+		//doc
+		resultActions
+			.andDo(document("delete-rooms",
+				getRestDocRequest(),
+				getRestDocResponse(),
+				pathParameters(
+					parameterWithName("roomId").description("방 아이디"))));
 	}
 }
