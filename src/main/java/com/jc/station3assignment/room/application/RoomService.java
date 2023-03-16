@@ -6,9 +6,13 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.jc.station3assignment.exception.room.PermissionDeniedRoomException;
+import com.jc.station3assignment.exception.room.RoomNotFoundException;
 import com.jc.station3assignment.exception.user.UserNotFoundException;
 import com.jc.station3assignment.room.application.dto.request.AddRoomRequestDto;
-import com.jc.station3assignment.room.application.dto.response.AddRoomResponseDto;
+import com.jc.station3assignment.room.application.dto.request.ModifyRoomRequestDto;
+import com.jc.station3assignment.room.application.dto.response.ModifyRoomResponseDto;
+import com.jc.station3assignment.room.application.dto.response.RoomIdResponseDto;
 import com.jc.station3assignment.room.domain.Room;
 import com.jc.station3assignment.room.domain.RoomType;
 import com.jc.station3assignment.room.domain.deal.Deal;
@@ -25,7 +29,7 @@ public class RoomService {
 	private final UserRepository userRepository;
 
 	@Transactional
-	public AddRoomResponseDto addRoom(AddRoomRequestDto addRoomRequestDto) {
+	public RoomIdResponseDto addRoom(AddRoomRequestDto addRoomRequestDto) {
 		User user = userRepository.findById(addRoomRequestDto.getUserId())
 			.orElseThrow(() -> new UserNotFoundException(addRoomRequestDto.getUserEmail()));
 
@@ -40,6 +44,47 @@ public class RoomService {
 
 		room.addDeals(deals);
 
-		return new AddRoomResponseDto(roomRepository.save(room).getId());
+		return new RoomIdResponseDto(roomRepository.save(room).getId());
+	}
+
+	//TODO update 좋은 방법 고민
+	@Transactional
+	public ModifyRoomResponseDto modifyRoom(ModifyRoomRequestDto modifyRoomRequestDto) {
+		User user = userRepository.findById(modifyRoomRequestDto.getUserId())
+			.orElseThrow(() -> new UserNotFoundException(modifyRoomRequestDto.getUserEmail()));
+
+		Room room = roomRepository.findById(modifyRoomRequestDto.getRoomId())
+			.orElseThrow(() -> new RoomNotFoundException(modifyRoomRequestDto.getRoomId()));
+
+		if (!room.isOwner(user)) {
+			throw new PermissionDeniedRoomException(room.getId());
+		}
+
+		// room.changeTitle(modifyRoomRequestDto.getTitle());
+		// room.changeRoomType(RoomType.valueOf(modifyRoomRequestDto.getRoomType()));
+		//
+		// List<Deal> deals = modifyRoomRequestDto.getDeals().stream()
+		// 	.map(modifyRoomDealRequestDto -> modifyRoomDealRequestDto.toEntity()).collect(Collectors.toList());
+
+		// room.changeDeals(deals);
+
+		Room room1 = Room.builder()
+			.id(room.getId())
+			.user(user)
+			.build();
+
+		room1.changeTitle(modifyRoomRequestDto.getTitle());
+		room1.changeRoomType(RoomType.valueOf(modifyRoomRequestDto.getRoomType()));
+
+		List<Deal> deals = modifyRoomRequestDto.getDeals().stream()
+			.map(modifyRoomDealRequestDto -> modifyRoomDealRequestDto.toEntity()).collect(Collectors.toList());
+
+		room1.addDeals(deals);
+
+		// room1.changeDeals(deals);
+
+		Room save = roomRepository.save(room1);
+
+		return ModifyRoomResponseDto.of(save);
 	}
 }

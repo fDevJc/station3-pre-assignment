@@ -17,10 +17,13 @@ import com.jc.station3assignment.room.domain.deal.Deal;
 import com.jc.station3assignment.room.domain.deal.Deals;
 import com.jc.station3assignment.user.domain.User;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Room {
 	@Id
@@ -40,7 +43,7 @@ public class Room {
 	private Deals deals = new Deals();
 
 	@Builder
-	public Room(Long id,User user, String title, RoomType roomType) {
+	public Room(Long id, User user, String title, RoomType roomType) {
 		this.id = id;
 		this.user = user;
 		this.title = title;
@@ -50,5 +53,23 @@ public class Room {
 	//==연관관계 매핑==
 	public void addDeals(List<Deal> deals) {
 		this.deals.addAll(this, deals);
+	}
+
+	public boolean isOwner(User user) {
+		return this.user.equals(user);
+	}
+
+	public void changeTitle(String title) {
+		this.title = title;
+	}
+
+	public void changeRoomType(RoomType roomType) {
+		this.roomType = roomType;
+	}
+
+	//TODO 변경로직 고민
+	public void changeDeals(List<Deal> deals) {
+		this.deals.removeRoom();
+		addDeals(deals);
 	}
 }
