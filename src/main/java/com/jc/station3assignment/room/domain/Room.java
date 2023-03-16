@@ -40,7 +40,8 @@ public class Room {
 	private Deals deals = new Deals();
 
 	@Builder
-	public Room(User user, String title, RoomType roomType) {
+	public Room(Long id,User user, String title, RoomType roomType) {
+		this.id = id;
 		this.user = user;
 		this.title = title;
 		this.roomType = roomType;
