@@ -12,6 +12,7 @@ import com.jc.station3assignment.authentication.presentation.dto.request.SignupR
 import com.jc.station3assignment.authentication.presentation.dto.response.SigninResponse;
 import com.jc.station3assignment.authentication.presentation.dto.response.SignupResponse;
 import com.jc.station3assignment.room.application.dto.request.AddRoomRequestDto;
+import com.jc.station3assignment.room.application.dto.request.DeleteRoomRequestDto;
 import com.jc.station3assignment.room.application.dto.request.ModifyRoomRequestDto;
 import com.jc.station3assignment.room.application.dto.response.ModifyRoomResponseDto;
 import com.jc.station3assignment.room.application.dto.response.RoomIdResponseDto;
@@ -120,6 +121,14 @@ public class DtoFactory {
 			.deposit(modifyRoomDealResponseDto.getDeposit())
 			.rent(modifyRoomDealResponseDto.getRent())
 			.orderNumber(modifyRoomDealResponseDto.getOrderNumber())
+			.build();
+	}
+
+	public static DeleteRoomRequestDto deleteRoomRequestDto(LoginUser loginUser, Long roomId) {
+		return DeleteRoomRequestDto.builder()
+			.userId(loginUser.getId())
+			.userEmail(loginUser.getEmail())
+			.roomId(roomId)
 			.build();
 	}
 }

@@ -10,6 +10,7 @@ import com.jc.station3assignment.exception.room.PermissionDeniedRoomException;
 import com.jc.station3assignment.exception.room.RoomNotFoundException;
 import com.jc.station3assignment.exception.user.UserNotFoundException;
 import com.jc.station3assignment.room.application.dto.request.AddRoomRequestDto;
+import com.jc.station3assignment.room.application.dto.request.DeleteRoomRequestDto;
 import com.jc.station3assignment.room.application.dto.request.ModifyRoomRequestDto;
 import com.jc.station3assignment.room.application.dto.response.ModifyRoomResponseDto;
 import com.jc.station3assignment.room.application.dto.response.RoomIdResponseDto;
@@ -86,5 +87,20 @@ public class RoomService {
 		Room save = roomRepository.save(room1);
 
 		return ModifyRoomResponseDto.of(save);
+	}
+
+	@Transactional
+	public void deleteRoom(DeleteRoomRequestDto deleteRoomRequestDto) {
+		User user = userRepository.findById(deleteRoomRequestDto.getUserId())
+			.orElseThrow(() -> new UserNotFoundException(deleteRoomRequestDto.getUserEmail()));
+
+		Room room = roomRepository.findById(deleteRoomRequestDto.getRoomId())
+			.orElseThrow(() -> new RoomNotFoundException(deleteRoomRequestDto.getRoomId()));
+
+		if (!room.isOwner(user)) {
+			throw new PermissionDeniedRoomException(room.getId());
+		}
+
+		roomRepository.delete(room);
 	}
 }
