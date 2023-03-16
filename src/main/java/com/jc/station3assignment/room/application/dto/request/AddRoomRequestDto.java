@@ -15,7 +15,6 @@ public class AddRoomRequestDto {
 	private String userEmail;
 
 	private String title;
-
 	private String roomType;
 
 	private List<AddRoomRequestDto.AddRoomDealRequestDto> deals;

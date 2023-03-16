@@ -15,9 +15,7 @@ public class ModifyRoomRequestDto {
 	private String userEmail;
 
 	private Long roomId;
-
 	private String title;
-
 	private String roomType;
 
 	private List<ModifyRoomRequestDto.ModifyRoomDealRequestDto> deals;

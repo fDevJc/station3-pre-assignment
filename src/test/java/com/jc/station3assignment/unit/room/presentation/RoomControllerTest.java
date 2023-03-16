@@ -9,8 +9,6 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.util.List;
-
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.junit.jupiter.api.Test;
@@ -31,11 +29,10 @@ import com.jc.station3assignment.room.application.dto.request.AddRoomRequestDto;
 import com.jc.station3assignment.room.application.dto.request.ModifyRoomRequestDto;
 import com.jc.station3assignment.room.application.dto.response.ModifyRoomResponseDto;
 import com.jc.station3assignment.room.application.dto.response.RoomIdResponseDto;
-import com.jc.station3assignment.room.domain.RoomType;
-import com.jc.station3assignment.room.domain.deal.DealType;
 import com.jc.station3assignment.room.presentation.RoomController;
 import com.jc.station3assignment.room.presentation.dto.request.AddRoomRequest;
 import com.jc.station3assignment.room.presentation.dto.request.ModifyRoomRequest;
+import com.jc.station3assignment.unit.room.RoomTestSampleDto;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @AutoConfigureRestDocs
@@ -53,34 +50,18 @@ public class RoomControllerTest {
 	@MockBean
 	private AuthService authService;
 
+	private static final LoginUser LOGIN_USER = new LoginUser(1L, "test@email.com");
+
 	@Test
 	void 로그인사용자는_방을_등록할_수_있다() throws Exception {
 		//given
-		AddRoomRequest.AddRoomDealRequest longTermRentDealRequest = AddRoomRequest.AddRoomDealRequest.builder()
-			.dealType(DealType.LONG_TERM_RENT.name())
-			.deposit(1000)
-			.orderNumber(1)
-			.build();
-
-		AddRoomRequest.AddRoomDealRequest monthlyRentDealRequest = AddRoomRequest.AddRoomDealRequest.builder()
-			.dealType(DealType.MONTHLY_RENT.name())
-			.deposit(500)
-			.rent(50)
-			.orderNumber(2)
-			.build();
-
-		AddRoomRequest addRoomRequest = AddRoomRequest.builder()
-			.title("좋은집 입니다")
-			.roomType(RoomType.ONE_ROOM.name())
-			.deals(List.of(longTermRentDealRequest, monthlyRentDealRequest))
-			.build();
-
+		AddRoomRequest addRoomRequest = RoomTestSampleDto.ADD_ROOM_REQUEST;
 		RoomIdResponseDto expectedResponse = new RoomIdResponseDto(1L);
 
 		given(authService.validateToken(any()))
 			.willReturn(true);
 		given(authService.getAuthenticatedLoginUser(any()))
-			.willReturn(new LoginUser(1L, "test@email.com"));
+			.willReturn(LOGIN_USER);
 		given(roomService.addRoom(any(AddRoomRequestDto.class)))
 			.willReturn(expectedResponse);
 
@@ -97,6 +78,70 @@ public class RoomControllerTest {
 			.andExpect(content().string(objectMapper.writeValueAsString(expectedResponse)));
 
 		//doc
+		setPostRoomsDocument(resultActions);
+	}
+
+	@Test
+	void 로그인사용자는_자신의_방을_수정할_수_있다() throws Exception {
+		//given
+		ModifyRoomRequest modifyRoomRequest = RoomTestSampleDto.MODIFY_ROOM_REQUEST;
+		ModifyRoomResponseDto expectedResponse = RoomTestSampleDto.MODIFY_ROOM_RESPONSE_DTO;
+
+		given(authService.validateToken(any()))
+			.willReturn(true);
+		given(authService.getAuthenticatedLoginUser(any()))
+			.willReturn(LOGIN_USER);
+		given(roomService.modifyRoom(any(ModifyRoomRequestDto.class)))
+			.willReturn(expectedResponse);
+
+		//when
+		ResultActions resultActions = mockMvc.perform(put("/api/v1/rooms/{roomId}", 1L)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(objectMapper.writeValueAsString(modifyRoomRequest))
+			.accept(MediaType.APPLICATION_JSON));
+
+		//then
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(content().string(objectMapper.writeValueAsString(expectedResponse)));
+
+		//doc
+		setPutRoomsDocument(resultActions);
+	}
+
+	@Test
+	void 로그인사용자는_자신의_방을_삭제할_수_있다() throws Exception {
+		//given
+		given(authService.validateToken(any()))
+			.willReturn(true);
+		given(authService.getAuthenticatedLoginUser(any()))
+			.willReturn(LOGIN_USER);
+
+		//when
+		ResultActions resultActions = mockMvc.perform(delete("/api/v1/rooms/{roomId}", 1L));
+
+		//then
+		resultActions
+			.andExpect(status().isOk());
+
+		//doc
+		setDeleteRoomsDocument(resultActions);
+	}
+
+	//Sample Dto
+
+	//Setting RestDocs Document
+	private static void setDeleteRoomsDocument(ResultActions resultActions) throws Exception {
+		resultActions
+			.andDo(document("delete-rooms",
+				getRestDocRequest(),
+				getRestDocResponse(),
+				pathParameters(
+					parameterWithName("roomId").description("방 아이디"))));
+	}
+
+	private static void setPostRoomsDocument(ResultActions resultActions) throws Exception {
 		resultActions
 			.andDo(document("post-rooms",
 				getRestDocRequest(),
@@ -114,56 +159,7 @@ public class RoomControllerTest {
 					fieldWithPath("id").type(JsonFieldType.NUMBER).description("등록 방 아이디(내부)"))));
 	}
 
-	@Test
-	void 로그인사용자는_자신의_방을_수정할_수_있다() throws Exception {
-		//given
-		ModifyRoomRequest.ModifyRoomDealRequest longTermRentDealRequest = ModifyRoomRequest.ModifyRoomDealRequest.builder()
-			.dealType(DealType.LONG_TERM_RENT.name())
-			.deposit(1200)
-			.orderNumber(2)
-			.build();
-
-		ModifyRoomRequest.ModifyRoomDealRequest monthlyRentDealRequest = ModifyRoomRequest.ModifyRoomDealRequest.builder()
-			.dealType(DealType.MONTHLY_RENT.name())
-			.deposit(700)
-			.rent(70)
-			.orderNumber(1)
-			.build();
-
-		ModifyRoomRequest modifyRoomRequest = ModifyRoomRequest.builder()
-			.title("더 좋은집 입니다")
-			.roomType(RoomType.ONE_ROOM.name())
-			.deals(List.of(longTermRentDealRequest, monthlyRentDealRequest))
-			.build();
-
-		ModifyRoomResponseDto expectedResponse = ModifyRoomResponseDto.builder()
-			.id(1L)
-			.title("111")
-			.roomType(RoomType.ONE_ROOM.name())
-			.deals(List.of(ModifyRoomResponseDto.ModifyRoomDealResponseDto.builder().dealType(DealType.MONTHLY_RENT.name()).build()))
-			.build();
-
-		given(authService.validateToken(any()))
-			.willReturn(true);
-		given(authService.getAuthenticatedLoginUser(any()))
-			.willReturn(new LoginUser(1L, "test@email.com"));
-
-		given(roomService.modifyRoom(any(ModifyRoomRequestDto.class)))
-			.willReturn(expectedResponse);
-
-		//when
-		ResultActions resultActions = mockMvc.perform(put("/api/v1/rooms/{roomId}", 1L)
-			.contentType(MediaType.APPLICATION_JSON)
-			.content(objectMapper.writeValueAsString(modifyRoomRequest))
-			.accept(MediaType.APPLICATION_JSON));
-
-		//then
-		resultActions
-			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-			.andExpect(content().string(objectMapper.writeValueAsString(expectedResponse)));
-
-		//doc
+	private static void setPutRoomsDocument(ResultActions resultActions) throws Exception {
 		resultActions
 			.andDo(document("put-rooms",
 				getRestDocRequest(),
@@ -189,29 +185,5 @@ public class RoomControllerTest {
 					fieldWithPath("deals[].deposit").type(JsonFieldType.NUMBER).description("보증금(만원)"),
 					fieldWithPath("deals[].rent").type(JsonFieldType.NUMBER).description("집세(만원)"),
 					fieldWithPath("deals[].orderNumber").type(JsonFieldType.NUMBER).description("정렬 순서"))));
-	}
-
-	@Test
-	void 로그인사용자는_자신의_방을_삭제할_수_있다() throws Exception {
-		//given
-		given(authService.validateToken(any()))
-			.willReturn(true);
-		given(authService.getAuthenticatedLoginUser(any()))
-			.willReturn(new LoginUser(1L, "test@email.com"));
-
-		//when
-		ResultActions resultActions = mockMvc.perform(delete("/api/v1/rooms/{roomId}", 1L));
-
-		//then
-		resultActions
-			.andExpect(status().isOk());
-
-		//doc
-		resultActions
-			.andDo(document("delete-rooms",
-				getRestDocRequest(),
-				getRestDocResponse(),
-				pathParameters(
-					parameterWithName("roomId").description("방 아이디"))));
 	}
 }
