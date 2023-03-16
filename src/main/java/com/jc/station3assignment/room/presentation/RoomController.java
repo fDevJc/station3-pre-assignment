@@ -17,6 +17,8 @@ import com.jc.station3assignment.common.DtoFactory;
 import com.jc.station3assignment.config.authentication.annotation.Authenticated;
 import com.jc.station3assignment.config.authentication.annotation.ForOnlyLoginUser;
 import com.jc.station3assignment.room.application.RoomService;
+import com.jc.station3assignment.room.application.dto.request.AddRoomRequestDto;
+import com.jc.station3assignment.room.application.dto.request.ModifyRoomRequestDto;
 import com.jc.station3assignment.room.application.dto.response.ModifyRoomResponseDto;
 import com.jc.station3assignment.room.application.dto.response.RoomIdResponseDto;
 import com.jc.station3assignment.room.presentation.dto.request.AddRoomRequest;
@@ -42,8 +44,11 @@ public class RoomController {
 		@Authenticated LoginUser loginUser,
 		@Valid @RequestBody AddRoomRequest addRoomRequest
 	) {
-		RoomIdResponseDto roomIdResponseDto = roomService.addRoom(DtoFactory.addRoomRequestDto(loginUser, addRoomRequest));
-		return ResponseEntity.status(HttpStatus.CREATED).body(DtoFactory.roomIdResponse(roomIdResponseDto));
+		AddRoomRequestDto addRoomRequestDto = DtoFactory.addRoomRequestDto(loginUser, addRoomRequest);
+		RoomIdResponseDto roomIdResponseDto = roomService.addRoom(addRoomRequestDto);
+		RoomIdResponse roomIdResponse = DtoFactory.roomIdResponse(roomIdResponseDto);
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(roomIdResponse);
 	}
 
 	@ForOnlyLoginUser
@@ -53,8 +58,11 @@ public class RoomController {
 		@PathVariable Long roomId,
 		@Valid @RequestBody ModifyRoomRequest modifyRoomRequest
 	) {
-		ModifyRoomResponseDto modifyRoomResponseDto = roomService.modifyRoom(DtoFactory.modifyRoomRequestDto(loginUser, roomId, modifyRoomRequest));
-		return ResponseEntity.status(HttpStatus.OK).body(DtoFactory.modifyRoomResponseDto(modifyRoomResponseDto));
+		ModifyRoomRequestDto modifyRoomRequestDto = DtoFactory.modifyRoomRequestDto(loginUser, roomId, modifyRoomRequest);
+		ModifyRoomResponseDto modifyRoomResponseDto = roomService.modifyRoom(modifyRoomRequestDto);
+		ModifyRoomResponse modifyRoomResponse = DtoFactory.modifyRoomResponseDto(modifyRoomResponseDto);
+
+		return ResponseEntity.status(HttpStatus.OK).body(modifyRoomResponse);
 	}
 
 	@ForOnlyLoginUser
@@ -64,6 +72,7 @@ public class RoomController {
 		@PathVariable Long roomId
 	) {
 		roomService.deleteRoom(DtoFactory.deleteRoomRequestDto(loginUser, roomId));
+
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }

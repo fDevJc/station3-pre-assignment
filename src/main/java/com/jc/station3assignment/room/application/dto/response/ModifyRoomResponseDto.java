@@ -15,6 +15,7 @@ public class ModifyRoomResponseDto {
 	private Long id;
 	private String title;
 	private String roomType;
+
 	private List<ModifyRoomDealResponseDto> deals;
 
 	@Getter
