@@ -3,7 +3,6 @@ package com.jc.station3assignment.unit.room.application;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
@@ -20,8 +19,8 @@ import com.jc.station3assignment.room.application.dto.response.ModifyRoomRespons
 import com.jc.station3assignment.room.application.dto.response.RoomIdResponseDto;
 import com.jc.station3assignment.room.domain.Room;
 import com.jc.station3assignment.room.domain.RoomType;
-import com.jc.station3assignment.room.domain.deal.DealType;
 import com.jc.station3assignment.room.domain.repository.RoomRepository;
+import com.jc.station3assignment.unit.room.RoomTestSampleDto;
 import com.jc.station3assignment.user.domain.User;
 import com.jc.station3assignment.user.domain.repository.UserRepository;
 
@@ -39,24 +38,7 @@ public class RoomServiceTest {
 	@Test
 	void 사용자가_방을_등록한다() throws Exception {
 		//given
-		AddRoomRequestDto.AddRoomDealRequestDto longTermRent = AddRoomRequestDto.AddRoomDealRequestDto.builder()
-			.dealType(DealType.LONG_TERM_RENT.name())
-			.deposit(1000)
-			.orderNumber(1)
-			.build();
-
-		AddRoomRequestDto.AddRoomDealRequestDto monthlyRent = AddRoomRequestDto.AddRoomDealRequestDto.builder()
-			.dealType(DealType.LONG_TERM_RENT.name())
-			.deposit(500)
-			.rent(50)
-			.orderNumber(2)
-			.build();
-
-		AddRoomRequestDto addRoomRequestDto = AddRoomRequestDto.builder()
-			.title("좋은 집입니다")
-			.roomType(RoomType.ONE_ROOM.name())
-			.deals(List.of(longTermRent, monthlyRent))
-			.build();
+		AddRoomRequestDto addRoomRequestDto = RoomTestSampleDto.ADD_ROOM_REQUEST_DTO;
 
 		Room room = Room.builder()
 			.id(1L)
@@ -64,7 +46,6 @@ public class RoomServiceTest {
 
 		given(roomRepository.save(any(Room.class)))
 			.willReturn(room);
-
 		given(userRepository.findById(any()))
 			.willReturn(Optional.of(User.builder().id(1L).build()));
 
@@ -78,31 +59,20 @@ public class RoomServiceTest {
 	@Test
 	void 사용자가_방을_수정한다() throws Exception {
 		//given
-		ModifyRoomRequestDto.ModifyRoomDealRequestDto longTermRent = ModifyRoomRequestDto.ModifyRoomDealRequestDto.builder()
-			.dealType(DealType.LONG_TERM_RENT.name())
-			.deposit(1000)
-			.orderNumber(1)
+		ModifyRoomRequestDto modifyRoomRequestDto = RoomTestSampleDto.MODIFY_ROOM_REQUEST_DTO;
+
+		User user = User.builder()
+			.id(1L)
 			.build();
 
-		ModifyRoomRequestDto.ModifyRoomDealRequestDto monthlyRent = ModifyRoomRequestDto.ModifyRoomDealRequestDto.builder()
-			.dealType(DealType.LONG_TERM_RENT.name())
-			.deposit(500)
-			.rent(50)
-			.orderNumber(2)
+		Room room = Room.builder()
+			.id(1L)
+			.user(user)
 			.build();
 
-		ModifyRoomRequestDto modifyRoomRequestDto = ModifyRoomRequestDto.builder()
-			.userId(1L)
-			.roomId(1L)
-			.title("더 좋은 집입니다")
-			.roomType(RoomType.ONE_ROOM.name())
-			.deals(List.of(longTermRent, monthlyRent))
-			.build();
-
-		User user = User.builder().id(1L).build();
-		Room room = Room.builder().id(1L).user(user).build();
-
-		Room changeRoom = Room.builder().id(1L).user(user)
+		Room changedRoom = Room.builder()
+			.id(1L)
+			.user(user)
 			.roomType(RoomType.ONE_ROOM)
 			.build();
 
@@ -110,9 +80,8 @@ public class RoomServiceTest {
 			.willReturn(Optional.of(user));
 		given(roomRepository.findById(anyLong()))
 			.willReturn(Optional.of(room));
-
 		given(roomRepository.save(any()))
-			.willReturn(changeRoom);
+			.willReturn(changedRoom);
 
 		//when
 		ModifyRoomResponseDto ret = roomService.modifyRoom(modifyRoomRequestDto);
