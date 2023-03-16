@@ -24,3 +24,8 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug
+
+security:
+  jwt:
+    secret-key: station3
+    expiration: 60000000
