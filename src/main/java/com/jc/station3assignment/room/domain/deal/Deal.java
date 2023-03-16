@@ -13,14 +13,11 @@ import javax.persistence.ManyToOne;
 import com.jc.station3assignment.room.domain.Room;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Deal {
@@ -38,6 +35,16 @@ public class Deal {
 	private Integer deposit;
 	private Integer rent;
 	private Integer orderNumber;
+
+	@Builder
+	public Deal(Long id, Room room, DealType dealType, Integer deposit, Integer rent, Integer orderNumber) {
+		this.id = id;
+		this.room = room;
+		this.dealType = dealType;
+		this.deposit = deposit;
+		this.rent = rent;
+		this.orderNumber = orderNumber;
+	}
 
 	public void addRoom(Room room) {
 		this.room = room;
