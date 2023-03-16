@@ -1,6 +1,6 @@
-package com.jc.station3assignment.authentication.infrastructure;
+package com.jc.station3assignment.config.authentication.encoder;
 
-import com.jc.station3assignment.authentication.application.PasswordEncoder;
+import com.jc.station3assignment.config.authentication.PasswordEncoder;
 
 public class DefaultPasswordEncoder implements PasswordEncoder {
 	@Override

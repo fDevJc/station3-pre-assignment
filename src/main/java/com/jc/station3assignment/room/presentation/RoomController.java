@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.jc.station3assignment.authentication.domain.LoginUser;
 import com.jc.station3assignment.common.DtoFactory;
+import com.jc.station3assignment.config.authentication.annotation.Authenticated;
+import com.jc.station3assignment.config.authentication.annotation.ForOnlyLoginUser;
 import com.jc.station3assignment.room.application.RoomService;
 import com.jc.station3assignment.room.application.dto.response.AddRoomResponseDto;
 import com.jc.station3assignment.room.presentation.dto.request.AddRoomRequest;
@@ -24,11 +26,14 @@ import lombok.RequiredArgsConstructor;
 public class RoomController {
 	private final RoomService roomService;
 
+	@ForOnlyLoginUser
 	@PostMapping("/rooms")
-	public ResponseEntity<AddRoomResponse> addRoom(@Valid @RequestBody AddRoomRequest addRoomRequest) {
-		//TODO 인가인증 처리 후 수정
-		LoginUser loginUser = new LoginUser(1L, "fdevjc@gmail.com");
-
+	public ResponseEntity<AddRoomResponse> addRoom(
+		@Authenticated LoginUser loginUser,
+		@Valid @RequestBody AddRoomRequest addRoomRequest
+	) {
+		String email = loginUser.getEmail();
+		System.out.println("email = " + email);
 		AddRoomResponseDto addRoomResponseDto = roomService.addRoom(DtoFactory.addRoomRequestDto(loginUser, addRoomRequest));
 		return ResponseEntity.status(HttpStatus.CREATED).body(DtoFactory.addRoomResponse(addRoomResponseDto));
 	}
