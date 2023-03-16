@@ -1,5 +1,7 @@
 package com.jc.station3assignment.user.domain;
 
+import java.util.Objects;
+
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,7 +15,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-// @Builder(access = AccessLevel.PRIVATE)
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -46,5 +47,20 @@ public class User {
 			.name(new Name(name))
 			.phoneNumber(new PhoneNumber(phoneNumber))
 			.build();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		User user = (User)o;
+		return id.equals(user.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
 	}
 }

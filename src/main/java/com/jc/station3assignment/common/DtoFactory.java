@@ -12,9 +12,13 @@ import com.jc.station3assignment.authentication.presentation.dto.request.SignupR
 import com.jc.station3assignment.authentication.presentation.dto.response.SigninResponse;
 import com.jc.station3assignment.authentication.presentation.dto.response.SignupResponse;
 import com.jc.station3assignment.room.application.dto.request.AddRoomRequestDto;
-import com.jc.station3assignment.room.application.dto.response.AddRoomResponseDto;
+import com.jc.station3assignment.room.application.dto.request.ModifyRoomRequestDto;
+import com.jc.station3assignment.room.application.dto.response.ModifyRoomResponseDto;
+import com.jc.station3assignment.room.application.dto.response.RoomIdResponseDto;
 import com.jc.station3assignment.room.presentation.dto.request.AddRoomRequest;
-import com.jc.station3assignment.room.presentation.dto.response.AddRoomResponse;
+import com.jc.station3assignment.room.presentation.dto.request.ModifyRoomRequest;
+import com.jc.station3assignment.room.presentation.dto.response.ModifyRoomResponse;
+import com.jc.station3assignment.room.presentation.dto.response.RoomIdResponse;
 
 public class DtoFactory {
 	public static SignupRequestDto signupRequestDto(SignupRequest signupRequest) {
@@ -71,7 +75,51 @@ public class DtoFactory {
 			.build();
 	}
 
-	public static AddRoomResponse addRoomResponse(AddRoomResponseDto addRoomResponseDto) {
-		return new AddRoomResponse(1L);
+	public static RoomIdResponse roomIdResponse(RoomIdResponseDto roomIdResponseDto) {
+		return new RoomIdResponse(roomIdResponseDto.getId());
+	}
+
+	public static ModifyRoomRequestDto modifyRoomRequestDto(LoginUser loginUser, Long roomId, ModifyRoomRequest modifyRoomRequest) {
+		return ModifyRoomRequestDto.builder()
+			.userId(loginUser.getId())
+			.userEmail(loginUser.getEmail())
+			.roomId(roomId)
+			.title(modifyRoomRequest.getTitle())
+			.roomType(modifyRoomRequest.getRoomType())
+			.deals(modifyRoomRequest.getDeals()
+				.stream()
+				.map(modifyRoomDealRequest -> modifyRoomDealRequestDto(modifyRoomDealRequest))
+				.collect(Collectors.toList()))
+			.build();
+	}
+
+	private static ModifyRoomRequestDto.ModifyRoomDealRequestDto modifyRoomDealRequestDto(ModifyRoomRequest.ModifyRoomDealRequest modifyRoomDealRequest) {
+		return ModifyRoomRequestDto.ModifyRoomDealRequestDto.builder()
+			.dealType(modifyRoomDealRequest.getDealType())
+			.deposit(modifyRoomDealRequest.getDeposit())
+			.rent(modifyRoomDealRequest.getRent())
+			.orderNumber(modifyRoomDealRequest.getOrderNumber())
+			.build();
+	}
+
+	public static ModifyRoomResponse modifyRoomResponseDto(ModifyRoomResponseDto modifyRoomResponseDto) {
+		return ModifyRoomResponse.builder()
+			.id(modifyRoomResponseDto.getId())
+			.title(modifyRoomResponseDto.getTitle())
+			.roomType(modifyRoomResponseDto.getRoomType())
+			.deals(modifyRoomResponseDto.getDeals()
+				.stream()
+				.map(modifyRoomDealResponseDto -> modifyRoomDealResponse(modifyRoomDealResponseDto))
+				.collect(Collectors.toList()))
+			.build();
+	}
+
+	private static ModifyRoomResponse.ModifyRoomDealResponse modifyRoomDealResponse(ModifyRoomResponseDto.ModifyRoomDealResponseDto modifyRoomDealResponseDto) {
+		return ModifyRoomResponse.ModifyRoomDealResponse.builder()
+			.dealType(modifyRoomDealResponseDto.getDealType())
+			.deposit(modifyRoomDealResponseDto.getDeposit())
+			.rent(modifyRoomDealResponseDto.getRent())
+			.orderNumber(modifyRoomDealResponseDto.getOrderNumber())
+			.build();
 	}
 }
