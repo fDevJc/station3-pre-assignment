@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -54,5 +55,15 @@ public class RoomController {
 	) {
 		ModifyRoomResponseDto modifyRoomResponseDto = roomService.modifyRoom(DtoFactory.modifyRoomRequestDto(loginUser, roomId, modifyRoomRequest));
 		return ResponseEntity.status(HttpStatus.OK).body(DtoFactory.modifyRoomResponseDto(modifyRoomResponseDto));
+	}
+
+	@ForOnlyLoginUser
+	@DeleteMapping("/rooms/{roomId}")
+	public ResponseEntity deleteRoom(
+		@Authenticated LoginUser loginUser,
+		@PathVariable Long roomId
+	) {
+		roomService.deleteRoom(DtoFactory.deleteRoomRequestDto(loginUser, roomId));
+		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 }
