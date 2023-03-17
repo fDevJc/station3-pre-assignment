@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class RoomResponseDto {
+public class RoomWithMainDealResponseDto {
 	private Long id;
 	private String title;
 	private String roomType;
@@ -17,16 +17,16 @@ public class RoomResponseDto {
 	private int deposit;
 	private int rent;
 
-	public static RoomResponseDto of(Room room) {
-		return RoomResponseDto.builder()
+	public static RoomWithMainDealResponseDto of(Room room) {
+		return RoomWithMainDealResponseDto.builder()
 			.id(room.getId())
 			.title(room.getTitle())
 			.roomType(room.getRoomType().name())
 			.roomTypeValue(room.getRoomType().value())
 			.mainDealType(room.getDeals().getMainDeal().getDealType().name())
 			.mainDealTypeValue(room.getDeals().getMainDeal().getDealType().name())
-			.deposit(builder().deposit)
-			.rent(builder().rent)
+			.deposit(room.getDeals().getMainDeal().getDeposit())
+			.rent(room.getDeals().getMainDeal().getRent())
 			.build();
 	}
 }

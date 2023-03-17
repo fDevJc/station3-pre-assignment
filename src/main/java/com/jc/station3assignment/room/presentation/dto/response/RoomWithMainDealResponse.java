@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class RoomResponse {
+public class RoomWithMainDealResponse {
 	private Long id;
 	private String title;
 	private String roomType;

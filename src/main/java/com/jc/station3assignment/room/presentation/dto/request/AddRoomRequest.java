@@ -15,15 +15,6 @@ public class AddRoomRequest {
 	@NotBlank
 	private String roomType;
 
-	private List<AddRoomDealRequest> deals;
-
-	@Builder
-	@Getter
-	public static class AddRoomDealRequest {
-		private String dealType;
-		private int deposit;
-		private int rent;
-		private int orderNumber;
-	}
+	private List<DealRequest> deals;
 }
 

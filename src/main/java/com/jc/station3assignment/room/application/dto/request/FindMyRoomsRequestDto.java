@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class FindMyRoomRequestDto {
+public class FindMyRoomsRequestDto {
 	private Long userId;
 	private String userEmail;
 
