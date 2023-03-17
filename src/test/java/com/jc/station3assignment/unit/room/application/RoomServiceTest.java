@@ -16,17 +16,17 @@ import org.springframework.data.domain.PageRequest;
 
 import com.jc.station3assignment.room.application.RoomService;
 import com.jc.station3assignment.room.application.dto.request.AddRoomRequestDto;
-import com.jc.station3assignment.room.application.dto.request.FindMyRoomRequestDto;
+import com.jc.station3assignment.room.application.dto.request.FindMyRoomsRequestDto;
 import com.jc.station3assignment.room.application.dto.request.ModifyRoomRequestDto;
-import com.jc.station3assignment.room.application.dto.response.ModifyRoomResponseDto;
+import com.jc.station3assignment.room.application.dto.response.RoomWithDealsResponseDto;
 import com.jc.station3assignment.room.application.dto.response.RoomIdResponseDto;
-import com.jc.station3assignment.room.application.dto.response.RoomResponseDto;
+import com.jc.station3assignment.room.application.dto.response.RoomWithMainDealResponseDto;
 import com.jc.station3assignment.room.domain.Room;
 import com.jc.station3assignment.room.domain.RoomType;
 import com.jc.station3assignment.room.domain.deal.Deal;
 import com.jc.station3assignment.room.domain.deal.DealType;
 import com.jc.station3assignment.room.domain.repository.RoomRepository;
-import com.jc.station3assignment.unit.room.RoomTestSampleDto;
+import com.jc.station3assignment.unit.room.RoomDtoFactory;
 import com.jc.station3assignment.user.domain.User;
 import com.jc.station3assignment.user.domain.repository.UserRepository;
 
@@ -68,7 +68,7 @@ public class RoomServiceTest {
 	@Test
 	void 사용자가_방을_등록한다() throws Exception {
 		//given
-		AddRoomRequestDto addRoomRequestDto = RoomTestSampleDto.ADD_ROOM_REQUEST_DTO;
+		AddRoomRequestDto addRoomRequestDto = RoomDtoFactory.ADD_ROOM_REQUEST_DTO;
 
 		given(userRepository.findById(any()))
 			.willReturn(Optional.of(mockUser));
@@ -85,7 +85,7 @@ public class RoomServiceTest {
 	@Test
 	void 사용자가_방의_타입을_수정한다() throws Exception {
 		//given
-		ModifyRoomRequestDto modifyRoomRequestDto = RoomTestSampleDto.MODIFY_ROOM_REQUEST_DTO;
+		ModifyRoomRequestDto modifyRoomRequestDto = RoomDtoFactory.MODIFY_ROOM_REQUEST_DTO;
 
 		given(userRepository.findById(anyLong()))
 			.willReturn(Optional.of(mockUser));
@@ -95,7 +95,7 @@ public class RoomServiceTest {
 			.willReturn(mockChangedRoom);
 
 		//when
-		ModifyRoomResponseDto ret = roomService.modifyRoom(modifyRoomRequestDto);
+		RoomWithDealsResponseDto ret = roomService.modifyRoom(modifyRoomRequestDto);
 
 		//then
 		Assertions.assertThat(ret.getRoomType()).isEqualTo(mockChangedRoom.getRoomType().name());
@@ -105,7 +105,7 @@ public class RoomServiceTest {
 	void 사용자가_내방을_조회한다() throws Exception {
 		//given
 
-		RoomResponseDto room1 = RoomResponseDto.builder()
+		RoomWithMainDealResponseDto room1 = RoomWithMainDealResponseDto.builder()
 			.id(1L)
 			.title("좋은집1")
 			.roomType(RoomType.ONE_ROOM.name())
@@ -115,7 +115,7 @@ public class RoomServiceTest {
 			.deposit(10000)
 			.build();
 
-		FindMyRoomRequestDto findMyRoomRequestDto = FindMyRoomRequestDto.builder()
+		FindMyRoomsRequestDto findMyRoomsRequestDto = FindMyRoomsRequestDto.builder()
 			.userId(1L)
 			.userEmail("fdevjc@gmail.com")
 			.pageable(PageRequest.of(0, 1))
@@ -126,11 +126,11 @@ public class RoomServiceTest {
 		given(userRepository.findById(anyLong()))
 			.willReturn(Optional.of(mockUser));
 
-		given(roomRepository.findAllByUser(findMyRoomRequestDto.getPageable(), mockUser))
+		given(roomRepository.findAllByUser(findMyRoomsRequestDto.getPageable(), mockUser))
 			.willReturn(List.of(mockRoom));
 
 		//when
-		List<RoomResponseDto> ret = roomService.findMyRooms(findMyRoomRequestDto);
+		List<RoomWithMainDealResponseDto> ret = roomService.findMyRooms(findMyRoomsRequestDto);
 
 		//then
 		Assertions.assertThat(ret.get(0).getId()).isEqualTo(room1.getId());
