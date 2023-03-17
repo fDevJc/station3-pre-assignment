@@ -13,6 +13,8 @@ import com.jc.station3assignment.room.domain.Room;
 
 @Embeddable
 public class Deals {
+	private static final int MAIN_DEAL_ORDER_NUMBER = 1;
+
 	@OneToMany(
 		mappedBy = "room",
 		fetch = FetchType.LAZY,
@@ -37,5 +39,11 @@ public class Deals {
 
 	public List<Deal> getDeals() {
 		return Collections.unmodifiableList(deals);
+	}
+
+	public Deal getMainDeal() {
+		return deals.stream()
+			.filter(deal -> deal.getOrderNumber().equals(MAIN_DEAL_ORDER_NUMBER))
+			.findAny().orElseThrow();
 	}
 }
