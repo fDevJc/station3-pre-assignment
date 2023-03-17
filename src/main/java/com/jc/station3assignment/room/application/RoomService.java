@@ -119,4 +119,18 @@ public class RoomService {
 			.map(RoomWithMainDealResponseDto::of)
 			.collect(Collectors.toList());
 	}
+
+	public RoomWithDealsResponseDto findMyRoom(LoginUserWithRoomIdRequestDto requestDto) {
+		User user = userRepository.findById(requestDto.getUserId())
+			.orElseThrow(() -> new UserNotFoundException(requestDto.getUserEmail()));
+
+		Room room = roomRepository.findById(requestDto.getRoomId())
+			.orElseThrow(() -> new RoomNotFoundException(requestDto.getRoomId()));
+
+		if (!room.isOwner(user)) {
+			throw new PermissionDeniedRoomException(room.getId());
+		}
+
+		return RoomWithDealsResponseDto.of(room);
+	}
 }

@@ -92,7 +92,23 @@ public class RoomController {
 		@Authenticated LoginUser loginUser,
 		@PageableDefault Pageable pageable
 	) {
-		List<RoomResponseDto> roomResponseDtos = roomService.findMyRooms(DtoFactory.findMyRoomsRequestDto(loginUser, pageable));
-		return ResponseEntity.status(HttpStatus.OK).body(DtoFactory.listRoomResponse(roomResponseDtos));
+		FindMyRoomsRequestDto requestDto = DtoFactory.findMyRoomsRequestDto(loginUser, pageable);
+		List<RoomWithMainDealResponseDto> responseDtoList = roomService.findMyRooms(requestDto);
+		List<RoomWithMainDealResponse> responseList = DtoFactory.roomWithMainDealResponseList(responseDtoList);
+
+		return ResponseEntity.status(HttpStatus.OK).body(responseList);
+	}
+
+	@ForOnlyLoginUser
+	@GetMapping("/rooms/{roomId}/me")
+	public ResponseEntity<RoomWithDealsResponse> findMyRoom(
+		@Authenticated LoginUser loginUser,
+		@PathVariable Long roomId
+	) {
+		LoginUserWithRoomIdRequestDto requestDto = DtoFactory.loginUserWithRoomIdRequestDto(loginUser, roomId);
+		RoomWithDealsResponseDto responseDto = roomService.findMyRoom(requestDto);
+		RoomWithDealsResponse response = DtoFactory.roomWithDealsResponse(responseDto);
+
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 }
