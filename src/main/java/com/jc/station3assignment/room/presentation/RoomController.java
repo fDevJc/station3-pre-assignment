@@ -23,15 +23,17 @@ import com.jc.station3assignment.config.authentication.annotation.Authenticated;
 import com.jc.station3assignment.config.authentication.annotation.ForOnlyLoginUser;
 import com.jc.station3assignment.room.application.RoomService;
 import com.jc.station3assignment.room.application.dto.request.AddRoomRequestDto;
+import com.jc.station3assignment.room.application.dto.request.FindMyRoomsRequestDto;
+import com.jc.station3assignment.room.application.dto.request.LoginUserWithRoomIdRequestDto;
 import com.jc.station3assignment.room.application.dto.request.ModifyRoomRequestDto;
-import com.jc.station3assignment.room.application.dto.response.ModifyRoomResponseDto;
 import com.jc.station3assignment.room.application.dto.response.RoomIdResponseDto;
-import com.jc.station3assignment.room.application.dto.response.RoomResponseDto;
+import com.jc.station3assignment.room.application.dto.response.RoomWithDealsResponseDto;
+import com.jc.station3assignment.room.application.dto.response.RoomWithMainDealResponseDto;
 import com.jc.station3assignment.room.presentation.dto.request.AddRoomRequest;
 import com.jc.station3assignment.room.presentation.dto.request.ModifyRoomRequest;
-import com.jc.station3assignment.room.presentation.dto.response.ModifyRoomResponse;
 import com.jc.station3assignment.room.presentation.dto.response.RoomIdResponse;
-import com.jc.station3assignment.room.presentation.dto.response.RoomResponse;
+import com.jc.station3assignment.room.presentation.dto.response.RoomWithDealsResponse;
+import com.jc.station3assignment.room.presentation.dto.response.RoomWithMainDealResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -51,25 +53,25 @@ public class RoomController {
 		@Authenticated LoginUser loginUser,
 		@Valid @RequestBody AddRoomRequest addRoomRequest
 	) {
-		AddRoomRequestDto addRoomRequestDto = DtoFactory.addRoomRequestDto(loginUser, addRoomRequest);
-		RoomIdResponseDto roomIdResponseDto = roomService.addRoom(addRoomRequestDto);
-		RoomIdResponse roomIdResponse = DtoFactory.roomIdResponse(roomIdResponseDto);
+		AddRoomRequestDto requestDto = DtoFactory.addRoomRequestDto(loginUser, addRoomRequest);
+		RoomIdResponseDto responseDto = roomService.addRoom(requestDto);
+		RoomIdResponse response = DtoFactory.roomIdResponse(responseDto);
 
-		return ResponseEntity.status(HttpStatus.CREATED).body(roomIdResponse);
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
 	@ForOnlyLoginUser
 	@PutMapping("/rooms/{roomId}")
-	public ResponseEntity<ModifyRoomResponse> modifyRoom(
+	public ResponseEntity<RoomWithDealsResponse> modifyRoom(
 		@Authenticated LoginUser loginUser,
 		@PathVariable Long roomId,
 		@Valid @RequestBody ModifyRoomRequest modifyRoomRequest
 	) {
-		ModifyRoomRequestDto modifyRoomRequestDto = DtoFactory.modifyRoomRequestDto(loginUser, roomId, modifyRoomRequest);
-		ModifyRoomResponseDto modifyRoomResponseDto = roomService.modifyRoom(modifyRoomRequestDto);
-		ModifyRoomResponse modifyRoomResponse = DtoFactory.modifyRoomResponseDto(modifyRoomResponseDto);
+		ModifyRoomRequestDto requestDto = DtoFactory.modifyRoomRequestDto(loginUser, roomId, modifyRoomRequest);
+		RoomWithDealsResponseDto responseDto = roomService.modifyRoom(requestDto);
+		RoomWithDealsResponse response = DtoFactory.roomWithDealsResponse(responseDto);
 
-		return ResponseEntity.status(HttpStatus.OK).body(modifyRoomResponse);
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
 	@ForOnlyLoginUser
@@ -78,14 +80,15 @@ public class RoomController {
 		@Authenticated LoginUser loginUser,
 		@PathVariable Long roomId
 	) {
-		roomService.deleteRoom(DtoFactory.deleteRoomRequestDto(loginUser, roomId));
+		LoginUserWithRoomIdRequestDto requestDto = DtoFactory.loginUserWithRoomIdRequestDto(loginUser, roomId);
+		roomService.deleteRoom(requestDto);
 
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
 	@ForOnlyLoginUser
 	@GetMapping("/rooms/me")
-	public ResponseEntity<List<RoomResponse>> findMyRooms(
+	public ResponseEntity<List<RoomWithMainDealResponse>> findMyRooms(
 		@Authenticated LoginUser loginUser,
 		@PageableDefault Pageable pageable
 	) {

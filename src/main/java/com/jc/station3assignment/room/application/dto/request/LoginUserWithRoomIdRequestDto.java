@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class DeleteRoomRequestDto {
+public class LoginUserWithRoomIdRequestDto {
 	private Long userId;
 	private String userEmail;
 
