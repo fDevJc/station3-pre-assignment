@@ -11,9 +11,11 @@ import com.jc.station3assignment.exception.room.RoomNotFoundException;
 import com.jc.station3assignment.exception.user.UserNotFoundException;
 import com.jc.station3assignment.room.application.dto.request.AddRoomRequestDto;
 import com.jc.station3assignment.room.application.dto.request.DeleteRoomRequestDto;
+import com.jc.station3assignment.room.application.dto.request.FindMyRoomRequestDto;
 import com.jc.station3assignment.room.application.dto.request.ModifyRoomRequestDto;
 import com.jc.station3assignment.room.application.dto.response.ModifyRoomResponseDto;
 import com.jc.station3assignment.room.application.dto.response.RoomIdResponseDto;
+import com.jc.station3assignment.room.application.dto.response.RoomResponseDto;
 import com.jc.station3assignment.room.domain.Room;
 import com.jc.station3assignment.room.domain.RoomType;
 import com.jc.station3assignment.room.domain.deal.Deal;
@@ -24,6 +26,7 @@ import com.jc.station3assignment.user.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Service
 public class RoomService {
 	private final RoomRepository roomRepository;
@@ -102,5 +105,16 @@ public class RoomService {
 		}
 
 		roomRepository.delete(room);
+	}
+
+	public List<RoomResponseDto> findMyRooms(FindMyRoomRequestDto findMyRoomRequestDto) {
+		User user = userRepository.findById(findMyRoomRequestDto.getUserId())
+			.orElseThrow(() -> new UserNotFoundException(findMyRoomRequestDto.getUserEmail()));
+
+		List<Room> rooms = roomRepository.findAllByUser(findMyRoomRequestDto.getPageable(), user);
+
+		return rooms.stream()
+			.map(RoomResponseDto::of)
+			.collect(Collectors.toList());
 	}
 }

@@ -1,6 +1,9 @@
 package com.jc.station3assignment.common;
 
+import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Pageable;
 
 import com.jc.station3assignment.authentication.application.dto.request.SigninRequestDto;
 import com.jc.station3assignment.authentication.application.dto.request.SignupRequestDto;
@@ -13,13 +16,16 @@ import com.jc.station3assignment.authentication.presentation.dto.response.Signin
 import com.jc.station3assignment.authentication.presentation.dto.response.SignupResponse;
 import com.jc.station3assignment.room.application.dto.request.AddRoomRequestDto;
 import com.jc.station3assignment.room.application.dto.request.DeleteRoomRequestDto;
+import com.jc.station3assignment.room.application.dto.request.FindMyRoomRequestDto;
 import com.jc.station3assignment.room.application.dto.request.ModifyRoomRequestDto;
 import com.jc.station3assignment.room.application.dto.response.ModifyRoomResponseDto;
 import com.jc.station3assignment.room.application.dto.response.RoomIdResponseDto;
+import com.jc.station3assignment.room.application.dto.response.RoomResponseDto;
 import com.jc.station3assignment.room.presentation.dto.request.AddRoomRequest;
 import com.jc.station3assignment.room.presentation.dto.request.ModifyRoomRequest;
 import com.jc.station3assignment.room.presentation.dto.response.ModifyRoomResponse;
 import com.jc.station3assignment.room.presentation.dto.response.RoomIdResponse;
+import com.jc.station3assignment.room.presentation.dto.response.RoomResponse;
 
 public class DtoFactory {
 	public static SignupRequestDto signupRequestDto(SignupRequest signupRequest) {
@@ -62,7 +68,7 @@ public class DtoFactory {
 			.roomType(addRoomRequest.getRoomType())
 			.deals(addRoomRequest.getDeals()
 				.stream()
-				.map(addRoomDealRequest -> addRoomDealRequestDto(addRoomDealRequest))
+				.map(DtoFactory::addRoomDealRequestDto)
 				.collect(Collectors.toList()))
 			.build();
 	}
@@ -89,7 +95,7 @@ public class DtoFactory {
 			.roomType(modifyRoomRequest.getRoomType())
 			.deals(modifyRoomRequest.getDeals()
 				.stream()
-				.map(modifyRoomDealRequest -> modifyRoomDealRequestDto(modifyRoomDealRequest))
+				.map(DtoFactory::modifyRoomDealRequestDto)
 				.collect(Collectors.toList()))
 			.build();
 	}
@@ -110,7 +116,7 @@ public class DtoFactory {
 			.roomType(modifyRoomResponseDto.getRoomType())
 			.deals(modifyRoomResponseDto.getDeals()
 				.stream()
-				.map(modifyRoomDealResponseDto -> modifyRoomDealResponse(modifyRoomDealResponseDto))
+				.map(DtoFactory::modifyRoomDealResponse)
 				.collect(Collectors.toList()))
 			.build();
 	}
@@ -129,6 +135,33 @@ public class DtoFactory {
 			.userId(loginUser.getId())
 			.userEmail(loginUser.getEmail())
 			.roomId(roomId)
+			.build();
+	}
+
+	public static FindMyRoomRequestDto findMyRoomsRequestDto(LoginUser loginUser, Pageable pageable) {
+		return FindMyRoomRequestDto.builder()
+			.userId(loginUser.getId())
+			.userEmail(loginUser.getEmail())
+			.pageable(pageable)
+			.build();
+	}
+
+	public static List<RoomResponse> listRoomResponse(List<RoomResponseDto> roomResponseDtos) {
+		return roomResponseDtos.stream()
+			.map(DtoFactory::roomResponse)
+			.collect(Collectors.toList());
+	}
+
+	private static RoomResponse roomResponse(RoomResponseDto roomResponseDto) {
+		return RoomResponse.builder()
+			.id(roomResponseDto.getId())
+			.title(roomResponseDto.getTitle())
+			.roomType(roomResponseDto.getRoomType())
+			.roomTypeValue(roomResponseDto.getRoomTypeValue())
+			.mainDealType(roomResponseDto.getMainDealType())
+			.mainDealTypeValue(roomResponseDto.getMainDealTypeValue())
+			.deposit(roomResponseDto.getDeposit())
+			.rent(roomResponseDto.getRent())
 			.build();
 	}
 }

@@ -1,10 +1,15 @@
 package com.jc.station3assignment.room.presentation;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,10 +26,12 @@ import com.jc.station3assignment.room.application.dto.request.AddRoomRequestDto;
 import com.jc.station3assignment.room.application.dto.request.ModifyRoomRequestDto;
 import com.jc.station3assignment.room.application.dto.response.ModifyRoomResponseDto;
 import com.jc.station3assignment.room.application.dto.response.RoomIdResponseDto;
+import com.jc.station3assignment.room.application.dto.response.RoomResponseDto;
 import com.jc.station3assignment.room.presentation.dto.request.AddRoomRequest;
 import com.jc.station3assignment.room.presentation.dto.request.ModifyRoomRequest;
 import com.jc.station3assignment.room.presentation.dto.response.ModifyRoomResponse;
 import com.jc.station3assignment.room.presentation.dto.response.RoomIdResponse;
+import com.jc.station3assignment.room.presentation.dto.response.RoomResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -74,5 +81,15 @@ public class RoomController {
 		roomService.deleteRoom(DtoFactory.deleteRoomRequestDto(loginUser, roomId));
 
 		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+
+	@ForOnlyLoginUser
+	@GetMapping("/rooms/me")
+	public ResponseEntity<List<RoomResponse>> findMyRooms(
+		@Authenticated LoginUser loginUser,
+		@PageableDefault Pageable pageable
+	) {
+		List<RoomResponseDto> roomResponseDtos = roomService.findMyRooms(DtoFactory.findMyRoomsRequestDto(loginUser, pageable));
+		return ResponseEntity.status(HttpStatus.OK).body(DtoFactory.listRoomResponse(roomResponseDtos));
 	}
 }
