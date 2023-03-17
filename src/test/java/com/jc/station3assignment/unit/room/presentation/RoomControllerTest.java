@@ -1,61 +1,40 @@
 package com.jc.station3assignment.unit.room.presentation;
 
 import static com.jc.station3assignment.config.docs.RestDocsUtils.*;
+import static com.jc.station3assignment.unit.room.RoomTestSampleDto.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import org.junit.jupiter.api.DisplayNameGeneration;
-import org.junit.jupiter.api.DisplayNameGenerator;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jc.station3assignment.authentication.application.AuthService;
 import com.jc.station3assignment.authentication.domain.LoginUser;
-import com.jc.station3assignment.room.application.RoomService;
 import com.jc.station3assignment.room.application.dto.request.AddRoomRequestDto;
 import com.jc.station3assignment.room.application.dto.request.ModifyRoomRequestDto;
 import com.jc.station3assignment.room.application.dto.response.ModifyRoomResponseDto;
 import com.jc.station3assignment.room.application.dto.response.RoomIdResponseDto;
-import com.jc.station3assignment.room.presentation.RoomController;
 import com.jc.station3assignment.room.presentation.dto.request.AddRoomRequest;
 import com.jc.station3assignment.room.presentation.dto.request.ModifyRoomRequest;
-import com.jc.station3assignment.unit.room.RoomTestSampleDto;
+import com.jc.station3assignment.room.presentation.dto.response.RoomResponse;
+import com.jc.station3assignment.unit.ControllerTest;
 
-@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
-@AutoConfigureRestDocs
-@WebMvcTest({RoomController.class})
-public class RoomControllerTest {
-	@Autowired
-	private MockMvc mockMvc;
-
-	@Autowired
-	private ObjectMapper objectMapper;
-
-	@MockBean
-	private RoomService roomService;
-
-	@MockBean
-	private AuthService authService;
-
+public class RoomControllerTest extends ControllerTest {
 	private static final LoginUser LOGIN_USER = new LoginUser(1L, "test@email.com");
 
 	@Test
 	void 로그인사용자는_방을_등록할_수_있다() throws Exception {
 		//given
-		AddRoomRequest addRoomRequest = RoomTestSampleDto.ADD_ROOM_REQUEST;
+		AddRoomRequest addRoomRequest = ADD_ROOM_REQUEST;
 		RoomIdResponseDto expectedResponse = new RoomIdResponseDto(1L);
 
 		given(authService.validateToken(any()))
@@ -74,7 +53,7 @@ public class RoomControllerTest {
 		//then
 		resultActions
 			.andExpect(status().isCreated())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(content().string(objectMapper.writeValueAsString(expectedResponse)));
 
 		//doc
@@ -84,8 +63,8 @@ public class RoomControllerTest {
 	@Test
 	void 로그인사용자는_자신의_방을_수정할_수_있다() throws Exception {
 		//given
-		ModifyRoomRequest modifyRoomRequest = RoomTestSampleDto.MODIFY_ROOM_REQUEST;
-		ModifyRoomResponseDto expectedResponse = RoomTestSampleDto.MODIFY_ROOM_RESPONSE_DTO;
+		ModifyRoomRequest modifyRoomRequest = MODIFY_ROOM_REQUEST;
+		ModifyRoomResponseDto expectedResponse = MODIFY_ROOM_RESPONSE_DTO;
 
 		given(authService.validateToken(any()))
 			.willReturn(true);
@@ -102,8 +81,9 @@ public class RoomControllerTest {
 
 		//then
 		resultActions
+			.andDo(print())
 			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(content().string(objectMapper.writeValueAsString(expectedResponse)));
 
 		//doc
@@ -129,7 +109,30 @@ public class RoomControllerTest {
 		setDeleteRoomsDocument(resultActions);
 	}
 
-	//Sample Dto
+	@Test
+	void 로그인사용자는_자신의_방을_조회할_수_있다() throws Exception {
+		//given
+		List<RoomResponse> expectedResponse = List.of(ROOM_RESPONSE_1, ROOM_RESPONSE_2);
+
+		given(authService.validateToken(any()))
+			.willReturn(true);
+		given(authService.getAuthenticatedLoginUser(any()))
+			.willReturn(LOGIN_USER);
+		given(roomService.findMyRooms(any()))
+			.willReturn(List.of(ROOM_RESPONSE_DTO_1, ROOM_RESPONSE_DTO_2));
+
+		//when
+		ResultActions resultActions = mockMvc.perform(get("/api/v1/rooms/me"));
+
+		//then
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(content().string(objectMapper.writeValueAsString(expectedResponse)));
+
+		//doc
+		setGetRoomsMeDocument(resultActions);
+	}
 
 	//Setting RestDocs Document
 	private static void setDeleteRoomsDocument(ResultActions resultActions) throws Exception {
@@ -139,6 +142,22 @@ public class RoomControllerTest {
 				getRestDocResponse(),
 				pathParameters(
 					parameterWithName("roomId").description("방 아이디"))));
+	}
+
+	private static void setGetRoomsMeDocument(ResultActions resultActions) throws Exception {
+		resultActions
+			.andDo(document("get-rooms-me",
+				getRestDocRequest(),
+				getRestDocResponse(),
+				responseFields(
+					fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("방 아이디"),
+					fieldWithPath("[].title").type(JsonFieldType.STRING).description("방 제목"),
+					fieldWithPath("[].roomType").type(JsonFieldType.STRING).description("방 타입"),
+					fieldWithPath("[].roomTypeValue").type(JsonFieldType.STRING).description("방 타입 값"),
+					fieldWithPath("[].mainDealType").type(JsonFieldType.STRING).description("메인 거래타입"),
+					fieldWithPath("[].mainDealTypeValue").type(JsonFieldType.STRING).description("메인 거래타입 값"),
+					fieldWithPath("[].deposit").type(JsonFieldType.NUMBER).description("보증금(만원)"),
+					fieldWithPath("[].rent").type(JsonFieldType.NUMBER).description("집세(만원)"))));
 	}
 
 	private static void setPostRoomsDocument(ResultActions resultActions) throws Exception {
