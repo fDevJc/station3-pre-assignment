@@ -1,12 +1,19 @@
-== 회원가입
-=== 요청
+=== 회원가입
+
+==== 요청
+
 ==== Curl
+
 include::{snippets}/post-signup/curl-request.adoc[]
+
 ==== HTTP Request
+
 include::{snippets}/post-signup/http-request.adoc[]
 include::{snippets}/post-signup/request-fields.adoc[]
 
-=== 응답
+==== 응답
+
 ==== HTTP Response
+
 include::{snippets}/post-signup/http-response.adoc[]
 include::{snippets}/post-signup/response-fields.adoc[]

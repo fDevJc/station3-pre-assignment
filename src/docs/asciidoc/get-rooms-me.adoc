@@ -1,12 +1,21 @@
-== 내 방 목록 조회
-=== 요청
+=== 내 방 목록 조회
+
+==== 요청
+
 ==== Curl
+
 include::{snippets}/get-rooms-me/curl-request.adoc[]
+
 ==== HTTP Request
+
 include::{snippets}/get-rooms-me/http-request.adoc[]
 ===== Header
+
 include::{snippets}/get-rooms-me/request-headers.adoc[]
-=== 응답
+
+==== 응답
+
 ==== HTTP Response
+
 include::{snippets}/get-rooms-me/http-response.adoc[]
 include::{snippets}/get-rooms-me/response-fields.adoc[]

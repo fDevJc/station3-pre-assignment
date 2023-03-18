@@ -1,0 +1,19 @@
+=== 로그인
+
+==== 요청
+
+==== Curl
+
+include::{snippets}/post-signin/curl-request.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/post-signin/http-request.adoc[]
+include::{snippets}/post-signin/request-fields.adoc[]
+
+==== 응답
+
+==== HTTP Response
+
+include::{snippets}/post-signin/http-response.adoc[]
+include::{snippets}/post-signin/response-fields.adoc[]
