@@ -10,6 +10,6 @@ import com.jc.station3assignment.room.domain.Room;
 import com.jc.station3assignment.user.domain.User;
 
 @Repository
-public interface RoomRepository extends JpaRepository<Room, Long> {
+public interface RoomRepository extends JpaRepository<Room, Long>, RoomQueryDslRepository {
 	List<Room> findAllByUser(Pageable pageable, User user);
 }

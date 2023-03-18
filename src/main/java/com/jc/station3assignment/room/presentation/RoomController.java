@@ -21,11 +21,13 @@ import com.jc.station3assignment.authentication.domain.LoginUser;
 import com.jc.station3assignment.common.DtoFactory;
 import com.jc.station3assignment.config.authentication.annotation.Authenticated;
 import com.jc.station3assignment.config.authentication.annotation.ForOnlyLoginUser;
+import com.jc.station3assignment.config.search.annotation.SearchCondition;
 import com.jc.station3assignment.room.application.RoomService;
 import com.jc.station3assignment.room.application.dto.request.AddRoomRequestDto;
 import com.jc.station3assignment.room.application.dto.request.FindMyRoomsRequestDto;
 import com.jc.station3assignment.room.application.dto.request.LoginUserWithRoomIdRequestDto;
 import com.jc.station3assignment.room.application.dto.request.ModifyRoomRequestDto;
+import com.jc.station3assignment.room.application.dto.request.SearchRoomDto;
 import com.jc.station3assignment.room.application.dto.response.RoomIdResponseDto;
 import com.jc.station3assignment.room.application.dto.response.RoomWithDealsResponseDto;
 import com.jc.station3assignment.room.application.dto.response.RoomWithMainDealResponseDto;
@@ -110,5 +112,18 @@ public class RoomController {
 		RoomWithDealsResponse response = DtoFactory.roomWithDealsResponse(responseDto);
 
 		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+
+	@ForOnlyLoginUser
+	@GetMapping("/rooms")
+	public ResponseEntity<List<RoomWithMainDealResponse>> findAllRooms(
+		@PageableDefault Pageable pageable,
+		@SearchCondition SearchRoomDto searchRoomDto
+	) {
+		searchRoomDto.addPageable(pageable);
+		List<RoomWithMainDealResponseDto> responseDtoList = roomService.findAllRooms(searchRoomDto);
+		List<RoomWithMainDealResponse> responseList = DtoFactory.roomWithMainDealResponseList(responseDtoList);
+
+		return ResponseEntity.status(HttpStatus.OK).body(responseList);
 	}
 }

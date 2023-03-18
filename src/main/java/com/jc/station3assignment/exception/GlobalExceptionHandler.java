@@ -55,4 +55,10 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
 	}
 
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<ErrorResponse> exception(Exception e) {
+		log.warn(LOG_FORMAT, e.getClass().getSimpleName(), e.getMessage());
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()));
+	}
+
 }
