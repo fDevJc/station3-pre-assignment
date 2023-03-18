@@ -41,8 +41,10 @@ public class SearchConditionArgumentResolver implements HandlerMethodArgumentRes
 		if (queryString == null) {
 			return parameter.getParameterType().getConstructor().newInstance();
 		}
+		String decodeQueryString = URLDecoder.decode(queryString, StandardCharsets.UTF_8);
+		log.info("Decoded QueryString: {}", decodeQueryString);
 
-		String query = queryExtractor.extract(URLDecoder.decode(queryString, StandardCharsets.UTF_8));
+		String query = queryExtractor.extract(decodeQueryString);
 		log.info("Extracted Query: {}", query);
 
 		return queryConvertor.convert(query, parameter.getParameterType());

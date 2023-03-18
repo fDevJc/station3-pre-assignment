@@ -1,5 +1,7 @@
 package com.jc.station3assignment.authentication.application;
 
+import static com.jc.station3assignment.config.authentication.JwtTokenProvider.*;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,11 +24,12 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 @Service
 public class AuthService {
-	private static final String AUTHORIZATION = "Authorization";
 	private final PasswordEncoder passwordEncoder;
 	private final JwtTokenProvider jwtTokenProvider;
 
 	private final UserRepository userRepository;
+
+	private static final String BEARER = "Bearer ";
 
 	@Transactional
 	public SignupResponseDto signup(SignupRequestDto signupRequestDto) {
@@ -45,7 +48,7 @@ public class AuthService {
 		String jwtToken = jwtTokenProvider.createToken(user.getId(), user.getEmail().get());
 
 		return SigninResponseDto.builder()
-			.tokenType(AUTHORIZATION)
+			.tokenType(BEARER)
 			.tokenValue(jwtToken)
 			.build();
 	}
@@ -67,8 +70,8 @@ public class AuthService {
 	}
 
 	public LoginUser getAuthenticatedLoginUser(String token) {
-		String id = jwtTokenProvider.getPayload(token, "id");
-		String email = jwtTokenProvider.getPayload(token, "email");
+		String id = jwtTokenProvider.getPayload(token, CLAIM_USER_ID);
+		String email = jwtTokenProvider.getPayload(token, CLAIM_USER_EMAIL);
 		return new LoginUser(Long.parseLong(id), email);
 	}
 }
