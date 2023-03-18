@@ -1,6 +1,6 @@
 package com.jc.station3assignment.unit.authentication.presentation;
 
-import static com.jc.station3assignment.config.docs.RestDocsUtils.*;
+import static com.jc.station3assignment.common.docs.RestDocsUtils.*;
 import static org.mockito.BDDMockito.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -118,7 +118,6 @@ public class AuthControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 			.andExpect(content().string(objectMapper.writeValueAsString(signinResponseDto)));
-
 
 		//doc
 		resultActions

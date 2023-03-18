@@ -39,10 +39,6 @@ import com.jc.station3assignment.room.presentation.dto.response.RoomWithMainDeal
 
 import lombok.RequiredArgsConstructor;
 
-/*	TODO
- *	- Location, Redirect
- */
-
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 @RestController

@@ -1,0 +1,29 @@
+=== 내 방 수정
+
+==== 요청
+
+==== Curl
+
+include::{snippets}/put-rooms/curl-request.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/put-rooms/http-request.adoc[]
+===== Header
+
+include::{snippets}/put-rooms/request-headers.adoc[]
+
+===== Parameter
+
+include::{snippets}/delete-rooms/path-parameters.adoc[]
+
+===== Body
+
+include::{snippets}/put-rooms/request-fields.adoc[]
+
+==== 응답
+
+==== HTTP Response
+
+include::{snippets}/put-rooms/http-response.adoc[]
+include::{snippets}/put-rooms/response-fields.adoc[]

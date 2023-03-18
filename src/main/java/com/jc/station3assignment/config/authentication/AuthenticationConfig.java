@@ -35,7 +35,7 @@ public class AuthenticationConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-		resolvers.add(new AuthenticationPrincipalArgumentResolver(authService));
+		resolvers.add(new AuthenticationPrincipalArgumentResolver(authenticationExtractor(), authService));
 	}
 
 }

@@ -1,0 +1,24 @@
+=== 내 방 삭제
+
+==== 요청
+
+==== Curl
+
+include::{snippets}/delete-rooms/curl-request.adoc[]
+
+==== HTTP Request
+
+include::{snippets}/delete-rooms/http-request.adoc[]
+===== Header
+
+include::{snippets}/delete-rooms/request-headers.adoc[]
+
+===== Parameter
+
+include::{snippets}/delete-rooms/path-parameters.adoc[]
+
+==== 응답
+
+==== HTTP Response
+
+include::{snippets}/delete-rooms/http-response.adoc[]

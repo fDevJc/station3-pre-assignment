@@ -3,7 +3,7 @@ package com.jc.station3assignment.authentication.presentation.dto.request;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
-import com.jc.station3assignment.exception.ErrorMessageConstant;
+import com.jc.station3assignment.exception.ValidErrorMessageConstant;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -12,11 +12,11 @@ import lombok.Getter;
 @Getter
 public class SigninRequest {
 
-	@Email(message = ErrorMessageConstant.EMAIL)
-	@NotBlank(message = ErrorMessageConstant.EMAIL_NOT_BLANK)
+	@Email(message = ValidErrorMessageConstant.EMAIL)
+	@NotBlank(message = ValidErrorMessageConstant.EMAIL_NOT_BLANK)
 	private String email;
 
-	@NotBlank(message = ErrorMessageConstant.PASSWORD_NOT_BLANK)
+	@NotBlank(message = ValidErrorMessageConstant.PASSWORD_NOT_BLANK)
 	private String password;
 
 }

@@ -26,8 +26,8 @@ public class DefaultJwtTokenProvider implements JwtTokenProvider {
 		Date expirationTime = new Date(now.getTime() + expiration);
 
 		return Jwts.builder()
-			.claim("id", id.toString())
-			.claim("email", email)
+			.claim(CLAIM_USER_ID, id.toString())
+			.claim(CLAIM_USER_EMAIL, email)
 			.setIssuedAt(now)
 			.setExpiration(expirationTime)
 			.signWith(SignatureAlgorithm.HS256, secretKey)
@@ -40,7 +40,6 @@ public class DefaultJwtTokenProvider implements JwtTokenProvider {
 			Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
 			return !claims.getBody().getExpiration().before(new Date());
 		} catch (JwtException | IllegalArgumentException e) {
-			e.printStackTrace();
 			return false;
 		}
 	}
@@ -54,8 +53,7 @@ public class DefaultJwtTokenProvider implements JwtTokenProvider {
 				.getBody()
 				.get(key, String.class);
 		} catch (JwtException | IllegalArgumentException e) {
-			e.printStackTrace();
-			throw new InvalidTokenException();
+			throw new InvalidTokenException(e.getMessage());
 		}
 	}
 }

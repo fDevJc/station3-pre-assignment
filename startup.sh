@@ -1,0 +1,1 @@
+./gradlew clean && ./gradlew build && java -jar ./build/libs/station3-assingment-0.0.1.jar

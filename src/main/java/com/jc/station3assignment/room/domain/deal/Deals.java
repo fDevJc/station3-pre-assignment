@@ -2,6 +2,7 @@ package com.jc.station3assignment.room.domain.deal;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -9,12 +10,11 @@ import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
+import com.jc.station3assignment.exception.room.DealNotFoundException;
 import com.jc.station3assignment.room.domain.Room;
 
 @Embeddable
 public class Deals {
-	private static final int MAIN_DEAL_ORDER_NUMBER = 1;
-
 	@OneToMany(
 		mappedBy = "room",
 		fetch = FetchType.LAZY,
@@ -28,22 +28,13 @@ public class Deals {
 		deals.forEach(deal -> deal.addRoom(room));
 	}
 
-	/*
-		TODO
-		더티체킹을 활용할지 세이브를 활용할지 고민
-	 */
-	public void removeRoom() {
-		// deals.forEach(deal -> deal.removeRoom());
-		deals.clear();
-	}
-
 	public List<Deal> getDeals() {
 		return Collections.unmodifiableList(deals);
 	}
 
 	public Deal getMainDeal() {
 		return deals.stream()
-			.filter(deal -> deal.getOrderNumber().equals(MAIN_DEAL_ORDER_NUMBER))
-			.findAny().orElseThrow();
+			.min(Comparator.comparingInt(Deal::getOrderNumber))
+			.orElseThrow(DealNotFoundException::new);
 	}
 }

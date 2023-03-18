@@ -14,19 +14,19 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 
+import com.jc.station3assignment.common.factory.RoomDtoFactory;
 import com.jc.station3assignment.room.application.RoomService;
 import com.jc.station3assignment.room.application.dto.request.AddRoomRequestDto;
 import com.jc.station3assignment.room.application.dto.request.FindMyRoomsRequestDto;
 import com.jc.station3assignment.room.application.dto.request.ModifyRoomRequestDto;
-import com.jc.station3assignment.room.application.dto.response.RoomWithDealsResponseDto;
 import com.jc.station3assignment.room.application.dto.response.RoomIdResponseDto;
+import com.jc.station3assignment.room.application.dto.response.RoomWithDealsResponseDto;
 import com.jc.station3assignment.room.application.dto.response.RoomWithMainDealResponseDto;
 import com.jc.station3assignment.room.domain.Room;
 import com.jc.station3assignment.room.domain.RoomType;
 import com.jc.station3assignment.room.domain.deal.Deal;
 import com.jc.station3assignment.room.domain.deal.DealType;
 import com.jc.station3assignment.room.domain.repository.RoomRepository;
-import com.jc.station3assignment.unit.room.RoomDtoFactory;
 import com.jc.station3assignment.user.domain.User;
 import com.jc.station3assignment.user.domain.repository.UserRepository;
 
