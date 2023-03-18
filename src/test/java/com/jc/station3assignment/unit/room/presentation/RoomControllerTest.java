@@ -160,6 +160,31 @@ public class RoomControllerTest extends ControllerTest {
 		setGetRoomMeDocument(resultActions);
 	}
 
+	@Test
+	void 로그인사용자는_모든_방의_목록을_조회할_수_있다() throws Exception {
+		//given
+		List<RoomWithMainDealResponse> expectedResponse = List.of(ROOM_RESPONSE_1, ROOM_RESPONSE_2);
+
+		given(authService.validateToken(any()))
+			.willReturn(true);
+		given(authService.getAuthenticatedLoginUser(any()))
+			.willReturn(LOGIN_USER);
+		given(roomService.findAllRooms(any()))
+			.willReturn(List.of(ROOM_RESPONSE_DTO_1, ROOM_RESPONSE_DTO_2));
+
+		//when
+		ResultActions resultActions = mockMvc.perform(get("/api/v1/rooms"));
+
+		//then
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+			.andExpect(content().string(objectMapper.writeValueAsString(expectedResponse)));
+
+		//doc
+		setGetRoomsMeDocument(resultActions);
+	}
+
 	//Setting RestDocs Document
 	private static void setDeleteRoomsDocument(ResultActions resultActions) throws Exception {
 		resultActions

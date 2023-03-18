@@ -62,6 +62,8 @@ public class RoomServiceTest {
 		.id(1L)
 		.room(mockRoom)
 		.dealType(DealType.MONTHLY_RENT)
+		.deposit(500)
+		.rent(50)
 		.orderNumber(1)
 		.build();
 
@@ -118,7 +120,7 @@ public class RoomServiceTest {
 		FindMyRoomsRequestDto findMyRoomsRequestDto = FindMyRoomsRequestDto.builder()
 			.userId(1L)
 			.userEmail("fdevjc@gmail.com")
-			.pageable(PageRequest.of(0, 1))
+			.pageable(PageRequest.of(0, 2))
 			.build();
 
 		mockRoom.addDeals(List.of(expectedRoomMainDeal));
