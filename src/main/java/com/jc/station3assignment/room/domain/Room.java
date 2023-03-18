@@ -50,7 +50,6 @@ public class Room {
 		this.roomType = roomType;
 	}
 
-	//==연관관계 매핑==
 	public void addDeals(List<Deal> deals) {
 		this.deals.addAll(this, deals);
 	}
@@ -67,9 +66,10 @@ public class Room {
 		this.roomType = roomType;
 	}
 
-	//TODO 변경로직 고민
-	public void changeDeals(List<Deal> deals) {
-		this.deals.removeRoom();
-		addDeals(deals);
+	public Room getClone() {
+		return Room.builder()
+			.id(id)
+			.user(user)
+			.build();
 	}
 }

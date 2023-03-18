@@ -36,16 +36,16 @@ public class RoomService {
 
 	@Transactional
 	public RoomIdResponseDto addRoom(AddRoomRequestDto requestDto) {
-		User user = userRepository.findById(requestDto.getUserId())
-			.orElseThrow(() -> new UserNotFoundException(requestDto.getUserEmail()));
+		User userEntity = findUserEntity(requestDto.getUserId(), requestDto.getUserEmail());
 
-		List<Deal> deals = requestDto.getDeals().stream()
+		List<Deal> deals = requestDto.getDeals()
+			.stream()
 			.map(DealRequestDto::toEntity)
 			.collect(Collectors.toList());
 
 		Room room = Room.builder()
 			.title(requestDto.getTitle())
-			.user(user)
+			.user(userEntity)
 			.roomType(RoomType.valueOf(requestDto.getRoomType()))
 			.build();
 
@@ -54,67 +54,41 @@ public class RoomService {
 		return new RoomIdResponseDto(roomRepository.save(room).getId());
 	}
 
-	//TODO update 좋은 방법 고민
 	@Transactional
 	public RoomWithDealsResponseDto modifyRoom(ModifyRoomRequestDto requestDto) {
-		User user = userRepository.findById(requestDto.getUserId())
-			.orElseThrow(() -> new UserNotFoundException(requestDto.getUserEmail()));
+		User userEntity = findUserEntity(requestDto.getUserId(), requestDto.getUserEmail());
 
-		Room room = roomRepository.findById(requestDto.getRoomId())
-			.orElseThrow(() -> new RoomNotFoundException(requestDto.getRoomId()));
+		Room roomEntity = findRoomEntity(requestDto.getRoomId());
 
-		if (!room.isOwner(user)) {
-			throw new PermissionDeniedRoomException(room.getId());
-		}
+		checkOwner(userEntity, roomEntity);
 
-		// room.changeTitle(requestDto.getTitle());
-		// room.changeRoomType(RoomType.valueOf(requestDto.getRoomType()));
-		//
-		// List<Deal> deals = requestDto.getDeals().stream()
-		// 	.map(modifyRoomDealRequestDto -> modifyRoomDealRequestDto.toEntity()).collect(Collectors.toList());
+		Room room = roomEntity.getClone();
+		room.changeTitle(requestDto.getTitle());
+		room.changeRoomType(RoomType.valueOf(requestDto.getRoomType()));
+		List<Deal> deals = requestDto.getDeals()
+			.stream()
+			.map(DealRequestDto::toEntity)
+			.collect(Collectors.toList());
+		room.addDeals(deals);
 
-		// room.changeDeals(deals);
-
-		Room room1 = Room.builder()
-			.id(room.getId())
-			.user(user)
-			.build();
-
-		room1.changeTitle(requestDto.getTitle());
-		room1.changeRoomType(RoomType.valueOf(requestDto.getRoomType()));
-
-		List<Deal> deals = requestDto.getDeals().stream()
-			.map(DealRequestDto::toEntity).collect(Collectors.toList());
-
-		room1.addDeals(deals);
-
-		// room1.changeDeals(deals);
-
-		Room save = roomRepository.save(room1);
-
-		return RoomWithDealsResponseDto.of(save);
+		return RoomWithDealsResponseDto.of(roomRepository.save(room));
 	}
 
 	@Transactional
 	public void deleteRoom(LoginUserWithRoomIdRequestDto requestDto) {
-		User user = userRepository.findById(requestDto.getUserId())
-			.orElseThrow(() -> new UserNotFoundException(requestDto.getUserEmail()));
+		User userEntity = findUserEntity(requestDto.getUserId(), requestDto.getUserEmail());
 
-		Room room = roomRepository.findById(requestDto.getRoomId())
-			.orElseThrow(() -> new RoomNotFoundException(requestDto.getRoomId()));
+		Room roomEntity = findRoomEntity(requestDto.getRoomId());
 
-		if (!room.isOwner(user)) {
-			throw new PermissionDeniedRoomException(room.getId());
-		}
+		checkOwner(userEntity, roomEntity);
 
-		roomRepository.delete(room);
+		roomRepository.delete(roomEntity);
 	}
 
 	public List<RoomWithMainDealResponseDto> findMyRooms(FindMyRoomsRequestDto requestDto) {
-		User user = userRepository.findById(requestDto.getUserId())
-			.orElseThrow(() -> new UserNotFoundException(requestDto.getUserEmail()));
+		User userEntity = findUserEntity(requestDto.getUserId(), requestDto.getUserEmail());
 
-		List<Room> rooms = roomRepository.findAllByUser(requestDto.getPageable(), user);
+		List<Room> rooms = roomRepository.findAllByUser(requestDto.getPageable(), userEntity);
 
 		return rooms.stream()
 			.map(RoomWithMainDealResponseDto::of)
@@ -122,20 +96,32 @@ public class RoomService {
 	}
 
 	public RoomWithDealsResponseDto findMyRoom(LoginUserWithRoomIdRequestDto requestDto) {
-		User user = userRepository.findById(requestDto.getUserId())
-			.orElseThrow(() -> new UserNotFoundException(requestDto.getUserEmail()));
+		User user = findUserEntity(requestDto.getUserId(), requestDto.getUserEmail());
 
-		Room room = roomRepository.findById(requestDto.getRoomId())
-			.orElseThrow(() -> new RoomNotFoundException(requestDto.getRoomId()));
+		Room room = findRoomEntity(requestDto.getRoomId());
 
-		if (!room.isOwner(user)) {
-			throw new PermissionDeniedRoomException(room.getId());
-		}
+		checkOwner(user, room);
 
 		return RoomWithDealsResponseDto.of(room);
 	}
 
 	public List<RoomWithMainDealResponseDto> findAllRooms(SearchRoomDto searchRoomDto) {
 		return roomRepository.findAllBySearchCondition(searchRoomDto);
+	}
+
+	private User findUserEntity(Long requestDto, String requestDto1) {
+		return userRepository.findById(requestDto)
+			.orElseThrow(() -> new UserNotFoundException(requestDto1));
+	}
+
+	private Room findRoomEntity(Long roomId) {
+		return roomRepository.findById(roomId)
+			.orElseThrow(() -> new RoomNotFoundException(roomId));
+	}
+
+	private static void checkOwner(User userEntity, Room roomEntity) {
+		if (!roomEntity.isOwner(userEntity)) {
+			throw new PermissionDeniedRoomException(roomEntity.getId());
+		}
 	}
 }
