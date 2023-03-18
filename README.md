@@ -1,3 +1,9 @@
+## 과제요구사항
+
+- [과제 요구사항 정리](./docs/과제요구사항.md)
+- [용어 정리](./docs/용어정리.md)
+- [API 설계](./docs/api)
+
 ## 실행방법
 ### 1. git clone
 ```shell
@@ -35,11 +41,3 @@ chmod 775 ./startup.sh
       ```shell
         localhost:8080/api/v1/rooms?q=%22roomType%22%3A%5B%22ONE_ROOM%22%5D%2C%22dealType%22%3A%5B%22LONG_TERM_RENT%22%5D%2C%22depositRange%22%3A%20%5B0%2C10000%5D%2C%22rentRange%22%3A%20%5B0%2C100%5D
       ```
-    
-
-
-### 과제요구사항
-
-- [과제 요구사항 정리](./docs/과제요구사항.md)
-- [용어 정리](./docs/용어정리.md)
-- [API 설계](./docs/api)
