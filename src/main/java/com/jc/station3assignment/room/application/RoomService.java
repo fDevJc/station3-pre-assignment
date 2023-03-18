@@ -14,6 +14,7 @@ import com.jc.station3assignment.room.application.dto.request.DealRequestDto;
 import com.jc.station3assignment.room.application.dto.request.FindMyRoomsRequestDto;
 import com.jc.station3assignment.room.application.dto.request.LoginUserWithRoomIdRequestDto;
 import com.jc.station3assignment.room.application.dto.request.ModifyRoomRequestDto;
+import com.jc.station3assignment.room.application.dto.request.SearchRoomDto;
 import com.jc.station3assignment.room.application.dto.response.RoomIdResponseDto;
 import com.jc.station3assignment.room.application.dto.response.RoomWithDealsResponseDto;
 import com.jc.station3assignment.room.application.dto.response.RoomWithMainDealResponseDto;
@@ -132,5 +133,9 @@ public class RoomService {
 		}
 
 		return RoomWithDealsResponseDto.of(room);
+	}
+
+	public List<RoomWithMainDealResponseDto> findAllRooms(SearchRoomDto searchRoomDto) {
+		return roomRepository.findAllBySearchCondition(searchRoomDto);
 	}
 }
