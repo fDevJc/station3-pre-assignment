@@ -30,19 +30,19 @@ public class AuthController {
 
 	@PostMapping("/signup")
 	public ResponseEntity<SignupResponse> signup(@Valid @RequestBody SignupRequest signupRequest) {
-
 		SignupRequestDto signupRequestDto = DtoFactory.signupRequestDto(signupRequest);
 		SignupResponseDto signupResponseDto = authService.signup(signupRequestDto);
+		SignupResponse response = DtoFactory.signupResponse(signupResponseDto);
 
-		return ResponseEntity.status(HttpStatus.CREATED).body(DtoFactory.signupResponse(signupResponseDto));
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
 	@PostMapping("/signin")
 	public ResponseEntity<SigninResponse> signin(@Valid @RequestBody SigninRequest signinRequest) {
-
 		SigninRequestDto signinRequestDto = DtoFactory.signinRequestDto(signinRequest);
 		SigninResponseDto signinResponseDto = authService.signin(signinRequestDto);
+		SigninResponse response = DtoFactory.signinResponseDto(signinResponseDto);
 
-		return ResponseEntity.status(HttpStatus.OK).body(DtoFactory.signinResponseDto(signinResponseDto));
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 }
