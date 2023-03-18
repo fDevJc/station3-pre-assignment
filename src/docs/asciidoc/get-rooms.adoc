@@ -1,0 +1,12 @@
+== 전체 방 목록 조회
+=== 요청
+==== Curl
+include::{snippets}/get-rooms/curl-request.adoc[]
+==== HTTP Request
+include::{snippets}/get-rooms/http-request.adoc[]
+===== Header
+include::{snippets}/get-rooms/request-headers.adoc[]
+=== 응답
+==== HTTP Response
+include::{snippets}/get-rooms/http-response.adoc[]
+include::{snippets}/get-rooms/response-fields.adoc[]

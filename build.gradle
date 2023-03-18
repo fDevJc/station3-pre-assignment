@@ -17,15 +17,24 @@ ext {
     snippetsDir = file('build/generated-snippets')
     docsDir = file('src/docs/asciidoc')
 }
-asciidoctor {
-    configurations 'asciidoctorExtensions'
-    inputs.dir snippetsDir
-    dependsOn test
-    attributes 'docsDir': docsDir
+
+test {
+    outputs.dir snippetsDir
+    useJUnitPlatform()
 }
 
 asciidoctor.doFirst {
     delete file('src/main/resources/static/docs')
+}
+
+asciidoctor {
+    configurations 'asciidoctorExtensions'
+    inputs.dir snippetsDir
+    sources {
+        include("**/index.adoc")
+    }
+    baseDirFollowsSourceFile()
+    dependsOn test
 }
 
 task copyDocument(type: Copy) {
@@ -34,13 +43,11 @@ task copyDocument(type: Copy) {
     into file("src/main/resources/static/docs")
 }
 
-build {
-    dependsOn copyDocument
-}
-
-test {
-    outputs.dir snippetsDir
-    useJUnitPlatform()
+bootJar {
+    dependsOn asciidoctor
+    from("${asciidoctor.outputDir}") {
+        into "static/docs"
+    }
 }
 
 configurations {
@@ -52,7 +59,7 @@ configurations {
 /* =============== END Spring Rest Docs SETTING ===============*/
 
 group = 'com.jc'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 sourceCompatibility = '11'
 
 configurations {

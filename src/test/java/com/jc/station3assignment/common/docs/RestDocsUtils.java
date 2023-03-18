@@ -1,4 +1,4 @@
-package com.jc.station3assignment.config.docs;
+package com.jc.station3assignment.common.docs;
 
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 
@@ -6,11 +6,11 @@ import org.springframework.restdocs.operation.preprocess.OperationRequestPreproc
 import org.springframework.restdocs.operation.preprocess.OperationResponsePreprocessor;
 
 public interface RestDocsUtils {
-	static OperationRequestPreprocessor getRestDocRequest(){
+	static OperationRequestPreprocessor getRestDocRequest() {
 		return preprocessRequest(prettyPrint());
 	}
 
-	static OperationResponsePreprocessor getRestDocResponse(){
+	static OperationResponsePreprocessor getRestDocResponse() {
 		return preprocessResponse(prettyPrint());
 	}
 

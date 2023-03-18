@@ -1,4 +1,4 @@
-package com.jc.station3assignment.unit.room;
+package com.jc.station3assignment.common.factory;
 
 import java.util.List;
 

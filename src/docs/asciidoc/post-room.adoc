@@ -1,0 +1,15 @@
+== 내 방 등록
+=== 요청
+==== Curl
+include::{snippets}/post-rooms/curl-request.adoc[]
+==== HTTP Request
+include::{snippets}/post-rooms/http-request.adoc[]
+===== Header
+include::{snippets}/post-rooms/request-headers.adoc[]
+===== Body
+include::{snippets}/post-rooms/request-fields.adoc[]
+
+=== 응답
+==== HTTP Response
+include::{snippets}/post-rooms/http-response.adoc[]
+include::{snippets}/post-rooms/response-fields.adoc[]

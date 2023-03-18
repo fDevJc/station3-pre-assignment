@@ -6,4 +6,18 @@
 :toclevels:2
 :sectlinks:
 
-include::authentication.adoc[]
+//회원
+include::signup.adoc[]
+include::signin.adoc[]
+
+//방 관리
+include::post-room.adoc[]
+include::put-room.adoc[]
+include::delete-room.adoc[]
+
+//내 방 조회
+include::get-room-me.adoc[]
+include::get-rooms-me.adoc[]
+
+//전체 방 조회
+include::get-rooms.adoc[]
