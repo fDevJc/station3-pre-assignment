@@ -177,7 +177,8 @@ public class RoomControllerTest extends ControllerTest {
 
 		//when
 		ResultActions resultActions = mockMvc.perform(get("/api/v1/rooms")
-			.header(HttpHeaders.AUTHORIZATION, AUTHORIZATION_HEADER_VALUE));
+			.header(HttpHeaders.AUTHORIZATION, AUTHORIZATION_HEADER_VALUE)
+			.queryParam("q", "\"roomType\":[\"ONE_ROOM\"],\"dealType\":[\"LONG_TERM_RENT\"],\"depositRange\": [0,10000],\"rentRange\": [0,100]"));
 
 		//then
 		resultActions

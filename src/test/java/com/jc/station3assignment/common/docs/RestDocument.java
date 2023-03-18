@@ -125,6 +125,23 @@ public class RestDocument {
 				requestHeaders(
 					headerWithName(HttpHeaders.AUTHORIZATION).description(AUTHORIZATION_HEADER_VALUE)
 				),
+				requestParameters(
+					parameterWithName("q").description(
+						"검색조건 파라미터\n"
+							+ "\n"
+							+ "JSON 형태\n"
+							+ "\n"
+							+ "값은 배열형태로 입력\n"
+							+ "\n"
+							+ "Range값은 범위[최소가격,최대가격]\n"
+							+ "\n"
+							+ "\"roomType\":[\"ONE_ROOM\",”TWO_ROOM”]\n"
+							+ "\n"
+							+ ",\"dealType\":[\"LONG_TERM_RENT\",”MONTHLY_RENT”]\n"
+							+ "\n"
+							+ ",\"depositRange\": [0,10000]\n"
+							+ "\n"
+							+ ",\"rentRange\": [0,100]")),
 				responseFields(
 					fieldWithPath("[].id").type(JsonFieldType.NUMBER).description("방 아이디"),
 					fieldWithPath("[].title").type(JsonFieldType.STRING).description("방 제목"),
