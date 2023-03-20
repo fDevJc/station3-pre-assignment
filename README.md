@@ -11,18 +11,23 @@ api-docs : http://localhost:8080/docs/index.html (서버실행 후 확인가능)
 git clone https://github.com/fDevJc/station3-pre-assignment.git
 ```
 
-### 2. build
+### 2. 프로젝트 폴더 이동
 ```shell
-./gradlew build
+cd station3-pre-assignment
 ```
 
-### 3. run
+### 3. clean & build
+```shell
+./gradlew clean build
+```
+
+### 4. run
 ```shell
 java -jar ./build/libs/station3-assingment-0.0.1.jar
 ```
 - 기본포트: 8080
 
-### (OR) 2,3 startup.sh
+### (OR) 3,4 startup.sh
 ```shell
 chmod 775 ./startup.sh
 ./startup.sh
