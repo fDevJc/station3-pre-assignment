@@ -1,7 +1,10 @@
 package com.jc.station3assignment.exception;
 
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor
 public class ErrorResponse {
-	private final String message;
+	private String message;
 
 	public ErrorResponse(String message) {
 		this.message = message;
