@@ -1,6 +1,6 @@
 package com.jc.station3assignment.unit.room.presentation;
 
-import static com.jc.station3assignment.common.docs.RestDocument.*;
+import static com.jc.station3assignment.common.docs.RoomRestDocument.*;
 import static com.jc.station3assignment.common.factory.RoomDtoFactory.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;

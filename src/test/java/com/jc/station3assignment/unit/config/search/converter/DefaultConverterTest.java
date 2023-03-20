@@ -1,9 +1,10 @@
-package com.jc.station3assignment.config.search.converter;
+package com.jc.station3assignment.unit.config.search.converter;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.jc.station3assignment.config.search.QueryConvertor;
+import com.jc.station3assignment.config.search.converter.DefaultConverter;
 import com.jc.station3assignment.room.application.dto.request.SearchRoomDto;
 
 class DefaultConverterTest {

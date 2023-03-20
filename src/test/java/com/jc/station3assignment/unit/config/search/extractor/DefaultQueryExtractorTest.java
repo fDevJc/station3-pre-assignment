@@ -1,9 +1,10 @@
-package com.jc.station3assignment.config.search.extractor;
+package com.jc.station3assignment.unit.config.search.extractor;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.jc.station3assignment.config.search.QueryExtractor;
+import com.jc.station3assignment.config.search.extractor.DefaultQueryExtractor;
 
 class DefaultQueryExtractorTest {
 	private QueryExtractor queryExtractor = new DefaultQueryExtractor();
