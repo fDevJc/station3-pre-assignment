@@ -9,7 +9,7 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.ResultActions;
 
-public class RestDocument {
+public class RoomRestDocument {
 	private static final String AUTHORIZATION_HEADER_VALUE = "Bearer Jwt Token";
 
 	public static void deleteRoomsDocument(ResultActions resultActions) throws Exception {
