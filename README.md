@@ -1,5 +1,5 @@
 ## 실행방법
-### 0 환경
+### 0. 환경
 ```
 java     : openjdk version "11.0.18"
 boot     : version '2.7.9'
