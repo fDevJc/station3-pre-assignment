@@ -3,9 +3,11 @@ package com.jc.station3assignment.config.authentication.provider;
 import java.util.Date;
 
 import com.jc.station3assignment.config.authentication.JwtTokenProvider;
+import com.jc.station3assignment.exception.authentication.ExpiredTokenException;
 import com.jc.station3assignment.exception.authentication.InvalidTokenException;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -37,10 +39,14 @@ public class DefaultJwtTokenProvider implements JwtTokenProvider {
 	@Override
 	public boolean validateToken(String token) {
 		try {
-			Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+			Jws<Claims> claims = Jwts.parser()
+				.setSigningKey(secretKey)
+				.parseClaimsJws(token);
 			return !claims.getBody().getExpiration().before(new Date());
+		} catch (ExpiredJwtException e) {
+			throw new ExpiredTokenException(e.getMessage());
 		} catch (JwtException | IllegalArgumentException e) {
-			return false;
+			throw new InvalidTokenException(e.getMessage());
 		}
 	}
 

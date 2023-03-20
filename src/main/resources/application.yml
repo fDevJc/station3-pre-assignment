@@ -28,4 +28,4 @@ logging:
 security:
   jwt:
     secret-key: station3
-    expiration: 60000000
+    expiration: 3600000

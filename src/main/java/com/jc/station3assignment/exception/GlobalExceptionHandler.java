@@ -6,12 +6,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import com.jc.station3assignment.exception.authentication.AuthenticationUserException;
-import com.jc.station3assignment.exception.authentication.InvalidTokenException;
-import com.jc.station3assignment.exception.room.PermissionDeniedRoomException;
-import com.jc.station3assignment.exception.room.RoomNotFoundException;
-import com.jc.station3assignment.exception.user.UserNotFoundException;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -22,46 +16,26 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ErrorResponse> methodArgumentNotValidException(MethodArgumentNotValidException e) {
 		logWarn(e);
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(e.getMessage()));
+		return errorResponseEntity(HttpStatus.BAD_REQUEST, e.getMessage());
 	}
 
-	@ExceptionHandler(PermissionDeniedRoomException.class)
-	public ResponseEntity<ErrorResponse> permissionDeniedRoomException(PermissionDeniedRoomException e) {
+	@ExceptionHandler(ApplicationException.class)
+	public ResponseEntity<ErrorResponse> applicationException(ApplicationException e) {
 		logWarn(e);
-		return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
-	}
-
-	@ExceptionHandler(RoomNotFoundException.class)
-	public ResponseEntity<ErrorResponse> roomNotFoundException(RoomNotFoundException e) {
-		logWarn(e);
-		return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
-	}
-
-	@ExceptionHandler(UserNotFoundException.class)
-	public ResponseEntity<ErrorResponse> userNotFoundException(UserNotFoundException e) {
-		logWarn(e);
-		return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
-	}
-
-	@ExceptionHandler(InvalidTokenException.class)
-	public ResponseEntity<ErrorResponse> invalidTokenException(InvalidTokenException e) {
-		logWarn(e);
-		return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
-	}
-
-	@ExceptionHandler(AuthenticationUserException.class)
-	public ResponseEntity<ErrorResponse> authenticationUserException(AuthenticationUserException e) {
-		logWarn(e);
-		return ResponseEntity.status(e.getHttpStatus()).body(new ErrorResponse(e.getMessage()));
+		return errorResponseEntity(e.getHttpStatus(), e.getMessage());
 	}
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> exception(Exception e) {
 		logWarn(e);
-		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()));
+		return errorResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
 	}
 
 	private static void logWarn(Exception e) {
-		log.warn(LOG_FORMAT, e.getClass().getSimpleName(), e.getMessage());
+		log.warn(LOG_FORMAT, e.getClass(), e.getMessage());
+	}
+
+	private static ResponseEntity<ErrorResponse> errorResponseEntity(HttpStatus status, String message) {
+		return ResponseEntity.status(status).body(new ErrorResponse(message));
 	}
 }

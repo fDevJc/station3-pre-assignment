@@ -1,44 +1,24 @@
 package com.jc.station3assignment.unit.authentication.presentation;
 
-import static com.jc.station3assignment.common.docs.RestDocsUtils.*;
+import static com.jc.station3assignment.common.docs.AuthRestDocument.*;
 import static org.mockito.BDDMockito.*;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jc.station3assignment.authentication.application.AuthService;
 import com.jc.station3assignment.authentication.application.dto.request.SigninRequestDto;
 import com.jc.station3assignment.authentication.application.dto.request.SignupRequestDto;
 import com.jc.station3assignment.authentication.application.dto.response.SigninResponseDto;
 import com.jc.station3assignment.authentication.application.dto.response.SignupResponseDto;
-import com.jc.station3assignment.authentication.presentation.AuthController;
 import com.jc.station3assignment.authentication.presentation.dto.request.SigninRequest;
 import com.jc.station3assignment.authentication.presentation.dto.request.SignupRequest;
+import com.jc.station3assignment.unit.ControllerTest;
 
-@AutoConfigureRestDocs
-@WebMvcTest({AuthController.class})
-public class AuthControllerTest {
-	@Autowired
-	private MockMvc mockMvc;
-
-	@Autowired
-	private ObjectMapper objectMapper;
-
-	@MockBean
-	private AuthService authService;
+public class AuthControllerTest extends ControllerTest {
 
 	@DisplayName("사용자는 회원가입을 할 수 있다")
 	@Test
@@ -68,26 +48,11 @@ public class AuthControllerTest {
 		//then
 		resultActions
 			.andExpect(status().isCreated())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(content().string(objectMapper.writeValueAsString(signupResponseDto)));
 
 		//doc
-		resultActions
-			.andDo(document("post-signup",
-				getRestDocRequest(),
-				getRestDocResponse(),
-				requestFields(
-					fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
-					fieldWithPath("password").type(JsonFieldType.STRING).description("패스워드"),
-					fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임"),
-					fieldWithPath("name").type(JsonFieldType.STRING).optional().description("이름"),
-					fieldWithPath("phoneNumber").type(JsonFieldType.STRING).optional().description("휴대폰")
-				),
-				responseFields(
-					fieldWithPath("id").type(JsonFieldType.NUMBER).description("사용자 아이디(내부)"),
-					fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
-					fieldWithPath("nickname").type(JsonFieldType.STRING).description("닉네임")
-				)));
+		postSignupDocument(resultActions);
 	}
 
 	@DisplayName("사용자는 로그인을 할 수 있다.")
@@ -116,21 +81,10 @@ public class AuthControllerTest {
 		//then
 		resultActions
 			.andExpect(status().isOk())
-			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
 			.andExpect(content().string(objectMapper.writeValueAsString(signinResponseDto)));
 
 		//doc
-		resultActions
-			.andDo(document("post-signin",
-				getRestDocRequest(),
-				getRestDocResponse(),
-				requestFields(
-					fieldWithPath("email").type(JsonFieldType.STRING).description("이메일"),
-					fieldWithPath("password").type(JsonFieldType.STRING).description("패스워드")
-				),
-				responseFields(
-					fieldWithPath("tokenType").type(JsonFieldType.STRING).description("토큰 타입"),
-					fieldWithPath("tokenValue").type(JsonFieldType.STRING).description("토큰 값")
-				)));
+		postSigninDocument(resultActions);
 	}
 }

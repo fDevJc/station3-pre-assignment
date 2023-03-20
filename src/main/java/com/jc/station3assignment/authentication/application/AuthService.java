@@ -29,7 +29,7 @@ public class AuthService {
 
 	private final UserRepository userRepository;
 
-	private static final String BEARER = "Bearer ";
+	private static final String BEARER = "Bearer";
 
 	@Transactional
 	public SignupResponseDto signup(SignupRequestDto signupRequestDto) {
@@ -43,7 +43,8 @@ public class AuthService {
 
 	public SigninResponseDto signin(SigninRequestDto signinRequestDto) {
 		User user = findUserByEmail(new Email(signinRequestDto.getEmail()));
-		checkPassword(signinRequestDto.getPassword(), user.getPassword().get());
+		String encodedPassword = passwordEncoder.encode(signinRequestDto.getPassword());
+		user.checkPassword(encodedPassword);
 
 		String jwtToken = jwtTokenProvider.createToken(user.getId(), user.getEmail().get());
 
@@ -58,20 +59,16 @@ public class AuthService {
 			.orElseThrow(AuthenticationUserException::new);
 	}
 
-	private void checkPassword(String inputPassword, String savedPassword) {
-		if (!passwordEncoder.matches(inputPassword, savedPassword)) {
-			throw new AuthenticationUserException();
-		}
-	}
-
 	@Transactional(propagation = Propagation.NEVER)
 	public boolean validateToken(String authentication) {
 		return jwtTokenProvider.validateToken(authentication);
 	}
 
+	@Transactional(propagation = Propagation.NEVER)
 	public LoginUser getAuthenticatedLoginUser(String token) {
 		String id = jwtTokenProvider.getPayload(token, CLAIM_USER_ID);
 		String email = jwtTokenProvider.getPayload(token, CLAIM_USER_EMAIL);
+
 		return new LoginUser(Long.parseLong(id), email);
 	}
 }

@@ -16,12 +16,13 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jc.station3assignment.authentication.application.AuthService;
+import com.jc.station3assignment.authentication.presentation.AuthController;
 import com.jc.station3assignment.room.application.RoomService;
 import com.jc.station3assignment.room.presentation.RoomController;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @AutoConfigureRestDocs
-@WebMvcTest({RoomController.class})
+@WebMvcTest({RoomController.class, AuthController.class})
 public abstract class ControllerTest {
 
 	@Autowired

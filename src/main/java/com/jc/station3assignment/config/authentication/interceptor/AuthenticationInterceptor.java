@@ -9,7 +9,6 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import com.jc.station3assignment.authentication.application.AuthService;
 import com.jc.station3assignment.config.authentication.AuthenticationExtractor;
 import com.jc.station3assignment.config.authentication.annotation.ForOnlyLoginUser;
-import com.jc.station3assignment.exception.authentication.InvalidTokenException;
 
 public class AuthenticationInterceptor implements HandlerInterceptor {
 	private final AuthenticationExtractor authenticationExtractor;
@@ -32,9 +31,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 		}
 
 		String token = authenticationExtractor.extract(request);
-		if (!authService.validateToken(token)) {
-			throw new InvalidTokenException();
-		}
+		authService.validateToken(token);
 
 		return true;
 	}

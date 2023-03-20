@@ -18,7 +18,6 @@ public class SignupRequest {
 	@NotBlank(message = ValidErrorMessageConstant.PASSWORD_NOT_BLANK)
 	private String password;
 
-	@NotBlank
 	private String nickname;
 
 	private String name;

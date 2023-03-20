@@ -1,6 +1,5 @@
 package com.jc.station3assignment.room.application.dto.request;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
@@ -12,10 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class SearchRoomDto {
-	private List<String> roomType = new ArrayList<>();
-	private List<String> dealType = new ArrayList<>();
-	private List<Integer> depositRange = new ArrayList<>();
-	private List<Integer> rentRange = new ArrayList<>();
+	private List<String> roomType;
+	private List<String> dealType;
+	private List<Integer> depositRange;
+	private List<Integer> rentRange;
 
 	private Pageable pageable;
 

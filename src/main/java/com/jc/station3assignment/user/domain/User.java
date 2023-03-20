@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import com.jc.station3assignment.exception.authentication.AuthenticationUserException;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -49,6 +51,12 @@ public class User {
 			.build();
 	}
 
+	public void checkPassword(String encodedPassword) {
+		if (!password.isEqualTo(encodedPassword)) {
+			throw new AuthenticationUserException();
+		}
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)
@@ -63,4 +71,5 @@ public class User {
 	public int hashCode() {
 		return Objects.hash(id);
 	}
+
 }
