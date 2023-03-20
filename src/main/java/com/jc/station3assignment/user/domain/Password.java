@@ -17,4 +17,8 @@ public class Password {
 	public String get() {
 		return password;
 	}
+
+	public boolean isEqualTo(String encodedPassword) {
+		return password.equals(encodedPassword);
+	}
 }
